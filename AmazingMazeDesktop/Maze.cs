@@ -14,18 +14,82 @@ namespace AmazingMazeDesktop;
 public class Maze
 {
     public int[,] MazeSchema;
-    private OrthogonalMaze _maze;
+    private OrthogonalMaze _labyrinthianMaze;
 
-    public Maze(int width, int height)
+    public Maze(int width, int height, int roomsCount = 2)
     {
-        GenerateMaze(width, height);
+        var oddWidth = width % 2 == 0 ? width + 1 : width;
+        var oddHeight = height % 2 == 0 ? height + 1 : height;
+        Generate(oddWidth, oddHeight,  roomsCount);
     }
 
-    public void GenerateMaze(int width, int height, int roomsCount = 2)
+    private void Generate(int width, int height, int roomsCount = 2)
     {
         // Generate Labyrinthian maze 
+        var baseWidth = width / 2; 
+        var baseHeight = height / 2;
+        var roomsMap = GenerateLabyrinthianMaze(baseWidth, baseHeight, roomsCount);
+
+        // Generate converted maze schema
+        var convertedMaze = new int[height, width];
+        for (var x = 0; x < width; x++)
+        {
+            for (var y = 0; y < height; y++)
+            {
+                convertedMaze[y, x] = 1;
+            }
+        }
+
+        for (var x = 0; x < _labyrinthianMaze.Columns; x++)
+        {
+            for (var y = 0; y < _labyrinthianMaze.Rows; y++)
+            {
+                var cell = _labyrinthianMaze[y, x];
+
+                var translatedY = y * 2 + 1;
+                var translatedX = x * 2 + 1;
+                if (cell is null)
+                {
+                    if (roomsMap[y, x] >= 2)
+                    {
+                        var id = roomsMap[y, x];
+                        if (x + 1 == _labyrinthianMaze.Columns || y + 1 == _labyrinthianMaze.Rows)
+                            continue;
+                        convertedMaze[translatedY, translatedX] = id;
+                        if (roomsMap[y, x + 1] == id)
+                            convertedMaze[translatedY, translatedX + 1] = id;
+                        else
+                            convertedMaze[translatedY, translatedX + 1] = 1;
+
+                        if (roomsMap[y + 1, x] == id)
+                            convertedMaze[translatedY + 1, translatedX] = id;
+                        else if (roomsMap[y + 1, x] == 1)
+                            convertedMaze[translatedY + 1, translatedX] = id;
+                        else
+                            convertedMaze[translatedY + 1, translatedX] = 1;
+
+                        if (roomsMap[y, x + 1] == id && roomsMap[y + 1, x] == id)
+                            convertedMaze[translatedY + 1, translatedX + 1] = id;
+                    }
+
+                    continue;
+                }
+
+                convertedMaze[translatedY, translatedX] = 0;
+                convertedMaze[translatedY, translatedX + 1] =
+                    _labyrinthianMaze.AreCellsConnected(cell, cell.DirectedNeighbors[0]) ? 0 : 1;
+                convertedMaze[translatedY + 1, translatedX] =
+                    _labyrinthianMaze.AreCellsConnected(cell, cell.DirectedNeighbors[2]) ? 0 : 1;
+            }
+        }
+
+        MazeSchema = convertedMaze;
+    }
+
+    private int[,] GenerateLabyrinthianMaze(int width, int height, int roomsCount)
+    {
         var excluded = new List<GridPoint2D>();
-        var rooms = GetRoomsMap(height, width, roomsCount);
+        var rooms = GetRoomsMap(width, height, roomsCount);
         for (var x = 0; x < width; x++)
         {
             for (var y = 0; y < height; y++)
@@ -38,105 +102,25 @@ public class Maze
         }
 
         Predicate<GridPoint2D> excludedPredicate = point2D => !excluded.Contains(point2D);
-        _maze = new OrthogonalMaze(width, height, excludedPredicate);
-        var generator = new PrimGeneration(_maze);
+        _labyrinthianMaze = new OrthogonalMaze(width, height, excludedPredicate);
+        var generator = new PrimGeneration(_labyrinthianMaze);
         generator.Generate();
-
-        // Generate converted maze schema
-        var H = height * 2 + 1;
-        var W = width * 2 + 1;
-        var convertedMaze = new int[H, W];
-        for (var x = 0; x < W; x++)
-        {
-            for (var y = 0; y < H; y++)
-            {
-                convertedMaze[y, x] = 1;
-            }
-        }
-
-        for (var x = 0; x < _maze.Columns; x++)
-        {
-            for (var y = 0; y < _maze.Rows; y++)
-            {
-                var cell = _maze[y, x];
-
-                var translatedY = y * 2 + 1;
-                var translatedX = x * 2 + 1;
-                if (cell is null)
-                {
-                    if (rooms[y, x] >= 2)
-                    {
-                        var id = rooms[y, x];
-                        if (x + 1 == _maze.Columns || y + 1 == _maze.Rows)
-                            continue;
-                        convertedMaze[translatedY, translatedX] = id;
-                        if (rooms[y, x + 1] == id)
-                            convertedMaze[translatedY, translatedX + 1] = id;
-                        else
-                            convertedMaze[translatedY, translatedX + 1] = 1;
-
-                        if (rooms[y + 1, x] == id)
-                            convertedMaze[translatedY + 1, translatedX] = id;
-                        else if (rooms[y + 1, x] == 1)
-                            convertedMaze[translatedY + 1, translatedX] = id;
-                        else
-                            convertedMaze[translatedY + 1, translatedX] = 1;
-
-                        if (rooms[y, x + 1] == id && rooms[y + 1, x] == id)
-                            convertedMaze[translatedY + 1, translatedX + 1] = id;
-                    }
-
-                    continue;
-                }
-
-                convertedMaze[translatedY, translatedX] = 0;
-                convertedMaze[translatedY, translatedX + 1] =
-                    _maze.AreCellsConnected(cell, cell.DirectedNeighbors[0]) ? 0 : 1;
-                convertedMaze[translatedY + 1, translatedX] =
-                    _maze.AreCellsConnected(cell, cell.DirectedNeighbors[2]) ? 0 : 1;
-            }
-        }
-
-        MazeSchema = convertedMaze;
-
-        MazeSvgExporterBuilder.For(_maze)
-            .AddBackground(SvgColor.White)
-            .AddWallsAsSinglePath()
-            .Build()
-            .ExportToFile("orthogonal-maze.svg");
-
-        for (var y = 0; y < convertedMaze.GetLength(0); y++)
-        {
-            for (var x = 0; x < convertedMaze.GetLength(1); x++)
-            {
-                Debug.Write(convertedMaze[y, x]);
-            }
-
-            Debug.Write("\n");
-        }
-
-        Debug.WriteLine("==========================================================================");
+        return rooms;
     }
 
     public Queue<Point> GetPath(Point start, Point destination)
     {
-        var startCell = TranslateGlobalToCell(start);
-        var destCell = TranslateGlobalToCell(destination);
+        var startCell = TranslateGlobalToLabyrinthian(start);
+        var destCell = TranslateGlobalToLabyrinthian(destination);
 
-        if (startCell.X < 0)
-            return [];
-        MazeEdge northWall = new(_maze[startCell.Y, startCell.X],
-            _maze[startCell.Y, startCell.X].DirectedNeighbors[3]!);
-        MazeEdge southWall = new(_maze[destCell.Y, destCell.X], _maze[destCell.Y, destCell.X].DirectedNeighbors[2]!);
-        var path = new MazePath2(_maze, northWall, southWall);
+        var path = new LabyrinthianPathfinder(_labyrinthianMaze, startCell, destCell);
         Queue<Point> waypoints = [];
 
-        var pathList = path.Path.ToList();
-        foreach (var cell in pathList)
+        var pathList = path.PathAsGridPoints;
+        foreach (var gridPoint in pathList)
         {
-            var gridPoint = _maze.GetCellPosition(cell);
             var waypoint = new Point(gridPoint.Column * 2 + 1, gridPoint.Row * 2 + 1);
-            
+
             if (waypoints.Count > 0)
             {
                 var last = waypoints.Last();
@@ -144,23 +128,22 @@ public class Maze
                     (last.X + waypoint.X) / 2,
                     (last.Y + waypoint.Y) / 2
                 );
-                
+
                 waypoints.Enqueue(midpoint);
-                
             }
-            
+
             waypoints.Enqueue(waypoint);
-            //Debug.WriteLine(_maze.GetCellPosition(cell).Column + " " + _maze.GetCellPosition(cell).Row);
         }
-        if(!waypoints.Last().Equals(destination))
+
+        if (!waypoints.Last().Equals(destination))
             waypoints.Enqueue(destination);
         while (waypoints.Contains(start))
             waypoints.Dequeue();
-        
+
         return waypoints;
     }
 
-    private Point TranslateGlobalToCell(Point global)
+    private Point TranslateGlobalToLabyrinthian(Point global)
     {
         var x = global.X / 2;
         var y = global.Y / 2;
@@ -170,8 +153,7 @@ public class Maze
     // Rooms creation
     private int[,] GetRoomsMap(int width, int height, int roomsCount)
     {
-        var map = new int[width, height];
-        var numberOfRooms = width * height / 30;
+        var map = new int[height, width];
 
         var rng = new Random();
         for (var i = 0; i < roomsCount; i++)

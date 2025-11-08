@@ -44,7 +44,7 @@ public class Main : Game
         _collisionSystem = new CollisionSystem();
         _entityFactory = new EntityFactory(_collisionSystem);
         
-        _maze = new Maze(10, 10);
+        _maze = new Maze(20, 30);
  
         _movementSystem = new MovementSystem();
         _spawnSystem = new SpawnSystem(_entityFactory);

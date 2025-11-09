@@ -35,9 +35,9 @@ public class SpawnSystem : EntityUpdateSystem
         
         while (true)
         {
-            var x = rng.Next(0, Maze.MazeSchema.GetLength(1) -1);
-            var y = rng.Next(0, Maze.MazeSchema.GetLength(0) -1);
-            if (Maze.MazeSchema[y,x] != 0) 
+            var x = rng.Next(0, Maze.Map.GetLength(1) -1);
+            var y = rng.Next(0, Maze.Map.GetLength(0) -1);
+            if (Maze.Map[y,x] != 0) 
                 continue;
             
             _entityFactory.BuildEntity(new EnemyBuilderArgs()

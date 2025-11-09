@@ -57,7 +57,7 @@ public class MovementSystem() : EntityUpdateSystem(Aspect.All(typeof(MovementCom
                     //    if (movement.Path.Count == 0) continue;
                     //}
                 }
-
+                if (movement.Path.Count == 0) continue;
                 if (Vector2.Distance(Conversions.CellToWorld(movement.Path.Peek()), position) < WaypointRadius) // Waypoint reached
                 {
                     movement.Path.Dequeue();

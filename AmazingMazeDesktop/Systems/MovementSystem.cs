@@ -14,9 +14,10 @@ namespace AmazingMazeDesktop.Systems;
 public class MovementSystem() : EntityUpdateSystem(Aspect.All(typeof(MovementComponent)))
 {
     public Maze Maze;
-    ComponentMapper<Transform2> _transformMapper;
-    ComponentMapper<MovementComponent> _movementMapper;
-    ComponentMapper<StateComponent> _stateMapper;
+    private ComponentMapper<Transform2> _transformMapper;
+    private ComponentMapper<MovementComponent> _movementMapper;
+    private ComponentMapper<StateComponent> _stateMapper;
+    private ComponentMapper<PathComponent> _pathMapper;
     public const float WaypointRadius = EngineSettings.CellSize / 8;
 
     public override void Initialize(IComponentMapperService mapperService)
@@ -24,6 +25,7 @@ public class MovementSystem() : EntityUpdateSystem(Aspect.All(typeof(MovementCom
         _transformMapper = mapperService.GetMapper<Transform2>();
         _movementMapper = mapperService.GetMapper<MovementComponent>();
         _stateMapper = mapperService.GetMapper<StateComponent>();
+        _pathMapper = mapperService.GetMapper<PathComponent>();
     }
 
     public override void Update(GameTime gameTime)
@@ -36,40 +38,58 @@ public class MovementSystem() : EntityUpdateSystem(Aspect.All(typeof(MovementCom
 
             if (movement.Mode == MovementComponent.MovementMode.FollowTarget)
             {
-                if (movement.Path.Count == 0) // Empty path
+                var pathComponent = _pathMapper.Get(entity);
+                if (pathComponent.Path.Count == 0) // Empty path
                 {
-                    movement.Path = Maze.GetPath(Conversions.WorldToCell(position),
-                        Conversions.WorldToCell(movement.Target));
+                    pathComponent.RecalculateRequested = true;
+                    // path = Maze.GetPath(Conversions.WorldToCell(position),
+                    //     Conversions.WorldToCell(movement.Target));
                     continue;
                 }
 
-                if (Conversions.WorldToCell(movement.Target) != movement.Path.LastOrDefault()) // Target position change
+                if (Conversions.WorldToCell(movement.Target) !=
+                    pathComponent.Path.LastOrDefault()) // Target position change
                 {
-                    movement.Path = Maze.GetPath(Conversions.WorldToCell(position),
-                        Conversions.WorldToCell(movement.Target));
-                    //if (Conversions.WorldToCell(position)== movement.Path.Peek()// ||
-                        // Conversions.WorldToCell(position).X == movement.Path.Peek().X + 1 ||
-                        // Conversions.WorldToCell(position).X == movement.Path.Peek().X - 1 ||
-                        // Conversions.WorldToCell(position).Y == movement.Path.Peek().Y - 1 ||
-                        // Conversions.WorldToCell(position).Y == movement.Path.Peek().Y + 1)
-                    //{
-                    //    movement.Path.Dequeue();
-                    //    if (movement.Path.Count == 0) continue;
-                    //}
-                }
-                if (movement.Path.Count == 0) continue;
-                if (Vector2.Distance(Conversions.CellToWorld(movement.Path.Peek()), position) < WaypointRadius) // Waypoint reached
-                {
-                    movement.Path.Dequeue();
-                    if (movement.Path.Count == 0) continue;
+                    pathComponent.RecalculateRequested = true;
+                    continue;
+                    // movement.Path = Maze.GetPath(Conversions.WorldToCell(position),
+                    //     Conversions.WorldToCell(movement.Target));
                 }
 
+                //if (movement.Path.Count == 0) continue;
+                if (Vector2.Distance(Conversions.CellToWorld(pathComponent.Path.Peek()), position) <
+                    WaypointRadius) // Waypoint reached
+                {
+                    pathComponent.Path.Dequeue();
+                    //if (pathComponent.Path.Count == 0) continue;
+                }
 
-                var target = Conversions.CellToWorld(movement.Path.Peek());
-                //Debug.WriteLine($"Move peek: {movement.Path.Peek()}");
-                movement.Direction = Vector2.Normalize(Vector2.Subtract(target, position));
-                transform.Position += movement.Direction * movement.Speed *
-                                      (float)gameTime.ElapsedGameTime.TotalSeconds;
+                if (pathComponent.Path.TryPeek(out var nextWaypoint))
+                {
+                    var target = Conversions.CellToWorld(nextWaypoint);
+                    //Debug.WriteLine($"Move peek: {movement.Path.Peek()}");
+                    movement.Direction = Vector2.Normalize(Vector2.Subtract(target, position));
+                    transform.Position += movement.Direction * movement.Speed *
+                                          (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                // if (Conversions.WorldToCell(movement.Target) != movement.Path.LastOrDefault()) // Target position change
+                // {
+                //     movement.Path = Maze.GetPath(Conversions.WorldToCell(position),
+                //         Conversions.WorldToCell(movement.Target));
+                // }
+                // if (movement.Path.Count == 0) continue;
+                // if (Vector2.Distance(Conversions.CellToWorld(movement.Path.Peek()), position) < WaypointRadius) // Waypoint reached
+                // {
+                //     movement.Path.Dequeue();
+                //     if (movement.Path.Count == 0) continue;
+                // }
+
+
+                // var target = Conversions.CellToWorld(movement.Path.Peek());
+                // //Debug.WriteLine($"Move peek: {movement.Path.Peek()}");
+                // movement.Direction = Vector2.Normalize(Vector2.Subtract(target, position));
+                // transform.Position += movement.Direction * movement.Speed *
+                //                       (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             else if (movement.Mode == MovementComponent.MovementMode.ToDirection)
             {

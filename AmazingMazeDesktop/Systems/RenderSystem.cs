@@ -23,6 +23,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
     private ComponentMapper<ColliderComponent> _colliderMapper;
     private ComponentMapper<StateComponent> _stateMapper;
     private ComponentMapper<MovementComponent> _movementMapper;
+    private ComponentMapper<PathComponent> _pathMapper;
     public override void Initialize(IComponentMapperService mapperService)
     {
         _transformMapper = mapperService.GetMapper<Transform2>();
@@ -31,6 +32,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
         _animatorMapper = mapperService.GetMapper<AnimatorComponent>();
         _stateMapper = mapperService.GetMapper<StateComponent>();
         _movementMapper = mapperService.GetMapper<MovementComponent>();
+        _pathMapper = mapperService.GetMapper<PathComponent>();
     }
 
     public override void Draw(GameTime gameTime)
@@ -97,11 +99,11 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
                         Color.Blue);
                 }
 
-                if (_movementMapper.TryGet(entity, out var movement) && movement.Path.Count > 0)
+                if (_pathMapper.TryGet(entity, out var pathCompoennt) && pathCompoennt.Path.Count > 0)
                 {
                     //for(int i = 0; i < movement.Path.Count; i++)
                     //{
-                        var path = new Queue<Point>(movement.Path);
+                        var path = new Queue<Point>(pathCompoennt.Path);
                         try
                         {
                             while (path.Count > 0)

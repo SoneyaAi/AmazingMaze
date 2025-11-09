@@ -16,9 +16,11 @@ namespace AmazingMazeDesktop;
 public class Maze
 {
     public int[,] Map;
-    public IReadOnlyDictionary<int, List<Point>> Rooms => _roomIdCellsDictionary;
+    // public IReadOnlyDictionary<int, List<Point>> Rooms =>  _roomIdCellsDictionary;
+    public IReadOnlyDictionary<int, Room> Rooms =>  _roomsDictionary;
 
-    private Dictionary<int, List<Point>> _roomIdCellsDictionary = new();
+    //private Dictionary<int, List<Point>> _roomIdCellsDictionary = new();
+    private Dictionary<int, Room> _roomsDictionary = new();
     private readonly LabyrinthianMaze _labyrinthianMaze = new();
 
     public Maze(int width, int height, int roomsCount = 2)
@@ -103,26 +105,30 @@ public class Maze
                 if (value < 2)
                     continue;
 
-                if (_roomIdCellsDictionary.TryGetValue(value, out var cellsList))
+                
+                
+                
+                if (_roomsDictionary.TryGetValue(value, out var room))
                 {
-                    cellsList.Add(new Point(x, y));
+                    room.Cells.Add(new Point(x, y));
                 }
                 else
                 {
-                    _roomIdCellsDictionary.Add(value, new List<Point>() { new Point(x, y) });
+                    var newRoom = new Room();
+                    newRoom.Id = value;
+                    newRoom.Cells.Add(new Point(x, y));
+                    _roomsDictionary.Add(value,  newRoom);
                 }
             }
         }
 
         // Add exits from rooms
-        foreach (var roomId in _roomIdCellsDictionary.Keys)
+        foreach (var roomId in _roomsDictionary.Keys)
         {
-            var cells = _roomIdCellsDictionary[roomId].Shuffle(new Random());
-            Debug.WriteLine("cells: " + string.Join(',', cells));
+            var cells = _roomsDictionary[roomId].Cells.ToList().Shuffle(new Random());
             foreach (var cell in cells)
             {
                 var top = cell + new Point(0, -2);
-                Debug.WriteLine("top: " + top + " = " + convertedMaze[top.Y, top.X]);
                 var down = cell + new Point(0, 2);
                 var left = cell + new Point(-2, 0);
                 var right = cell + new Point(2, 0);
@@ -134,23 +140,31 @@ public class Maze
                 if (convertedMaze[top.Y, top.X] == 0)
                 {
                     convertedMaze[top.Y + 1, top.X] = roomId;
+                    _roomsDictionary[roomId].EntryPath[0] = top;
+                    _roomsDictionary[roomId].EntryPath[1] = cell;
                     break;
                 }
                 
                 if (convertedMaze[down.Y, down.X] == 0)
                 {
                     convertedMaze[down.Y - 1, down.X] = roomId;
+                    _roomsDictionary[roomId].EntryPath[0] = down;
+                    _roomsDictionary[roomId].EntryPath[1] = cell;
                     break;
                 }
                 if (convertedMaze[right.Y, right.X] == 0)
                 {
                     convertedMaze[right.Y, right.X - 1] = roomId;
+                    _roomsDictionary[roomId].EntryPath[0] = right;
+                    _roomsDictionary[roomId].EntryPath[1] = cell;
                     break;
                 }
                 
                 if (convertedMaze[left.Y, left.X] == 0)
                 {
                     convertedMaze[left.Y , left.X + 1] = roomId;
+                    _roomsDictionary[roomId].EntryPath[0] = left;
+                    _roomsDictionary[roomId].EntryPath[1] = cell;
                     break;
                 }
             }
@@ -178,6 +192,7 @@ public class Maze
                 );
 
                 waypoints.Enqueue(midpoint);
+                
             }
 
             waypoints.Enqueue(waypoint);
@@ -187,9 +202,24 @@ public class Maze
         while (waypoints.Contains(start))
             waypoints.Dequeue();
 
-        // Remove unwanted after-destination waypoints
+        // Add destination as last point if needed
         if (!waypoints.LastOrDefault().Equals(destination))
             waypoints.Enqueue(destination);
+        
+        // Add destination itself
+        // if (!waypoints.LastOrDefault().Equals(destination))
+        // {
+        //     if (waypoints.Contains(destination))
+        //     {
+        //         while(waypoints.LastOrDefault() != destination)
+        //             waypoints.
+        //     }
+        //     else
+        //     {
+        //         waypoints.Enqueue(destination);
+        //     }
+        //     
+        // }
 
         return waypoints;
     }

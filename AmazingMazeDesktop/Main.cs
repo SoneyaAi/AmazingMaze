@@ -26,6 +26,7 @@ public class Main : Game
     private CollisionSystem _collisionSystem;
     private MovementSystem _movementSystem;
     private SpawnSystem _spawnSystem;
+    
     private int scale = 64;
 
     public Main()
@@ -54,6 +55,7 @@ public class Main : Game
         _world = new WorldBuilder()
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
+            .AddSystem(new PathfindingSystem(_maze))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem())

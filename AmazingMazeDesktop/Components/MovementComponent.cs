@@ -17,5 +17,5 @@ public class MovementComponent
     public float Speed { get; set; } = 60;
     
     public MovementMode Mode { get; set; } = MovementMode.FollowTarget;
-    public Queue<Point> Path { get; set; } = [];
+    //public Queue<Point> Path { get; set; } = [];
 }

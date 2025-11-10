@@ -53,6 +53,19 @@ public class Camera2D
         return transform;
     }
 
+    public Vector2 WorldSpaceToScreen(Vector2 position)
+    {
+        var transformationMatrix = GetTransformation();
+        var transformedVector = Vector2.Transform(position, transformationMatrix);
+
+        return new Vector2(transformedVector.X, transformedVector.Y);
+    }
+    
+    public Vector2 ScreenToWorldSpace(Point point)
+    {
+        Matrix invertedMatrix = Matrix.Invert(GetTransformation());
+        return Vector2.Transform(point.ToVector2(), invertedMatrix);
+    }
     public void Update()
     {
         // ---------- Movement

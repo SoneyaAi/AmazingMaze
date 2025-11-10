@@ -15,7 +15,8 @@ public static class Assets
         var headHeadsHumanMaleLight = content.Load<Texture2D>("GFX/head-heads-human-male-light");
         var torsoArmourLeatherMaleLeather = content.Load<Texture2D>("GFX/torso-armour-leather-male-leather");
         var weaponMagicWandMaleWand = content.Load<Texture2D>("GFX/weapon-magic-wand-male-wand");
-
+        FogOfWarEffect = content.Load<Effect>("SFX/fog_of_war");
+        
         BodyBodiesMaleLight = new SpriteSheet("Spritesheet/BodyBodiesMaleLight",
             Texture2DAtlas.Create("Atlas/BodyBodiesMaleLight", bodyBodiesMaleLight, 64, 64));
         HeadHeadsHumanMaleLight = new SpriteSheet("Spritesheet/HeadHeadsHumanMaleLight",
@@ -33,8 +34,9 @@ public static class Assets
 
     public static Texture2D OrangePlaceholderTexture, WhitePlaceholderTexture, YellowPlaceholderTexture;
 
-    public static SpriteSheet BodyBodiesMaleLight,  HeadHeadsHumanMaleLight,   TorsoArmourLeatherMaleLeather, WeaponMagicWandMaleWand; 
-    
+    public static SpriteSheet BodyBodiesMaleLight,  HeadHeadsHumanMaleLight,   TorsoArmourLeatherMaleLeather, WeaponMagicWandMaleWand;
+
+    public static Effect FogOfWarEffect;
     private static void Generate(List<SpriteSheet> list)
     {
         foreach (var spriteSheet in list)

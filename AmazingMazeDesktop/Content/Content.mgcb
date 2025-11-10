@@ -61,3 +61,9 @@
 /processorParam:TextureFormat=Color
 /build:GFX/weapon-magic-wand-male-wand.png
 
+#begin SFX/fog_of_war.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:SFX/fog_of_war.fx
+

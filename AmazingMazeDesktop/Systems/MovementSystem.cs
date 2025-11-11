@@ -13,7 +13,7 @@ namespace AmazingMazeDesktop.Systems;
 
 public class MovementSystem() : EntityUpdateSystem(Aspect.All(typeof(MovementComponent)))
 {
-    public Maze Maze;
+    public MazeStructure MazeStructure;
     private ComponentMapper<Transform2> _transformMapper;
     private ComponentMapper<MovementComponent> _movementMapper;
     private ComponentMapper<StateComponent> _stateMapper;

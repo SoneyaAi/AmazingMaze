@@ -6,22 +6,24 @@ using Microsoft.Xna.Framework;
 
 namespace Labyrinthian;
 
-public class LabyrinthianPathfinder
+public class UnderlayPathfinder
 {
+    public List<GridPoint2D> Path
+    {
+        get { return path.Select(x => ((GridMaze2D)_maze).GetCellPosition(x)).ToList(); }
+    }
+    
     private MazeCell[]? _path;
 
     private MazeEdge _entry;
     private MazeEdge _exit;
     private Maze _maze;
 
-    private MazeCell[] Path => _path ?? FindPath();
+    private MazeCell[] path => _path ?? FindPath();
 
-    public List<GridPoint2D> PathAsGridPoints
-    {
-        get { return Path.Select(x => ((GridMaze2D)_maze).GetCellPosition(x)).ToList(); }
-    }
+
     
-    public LabyrinthianPathfinder(GridMaze2D maze, Point startCell, Point destCell)
+    public UnderlayPathfinder(GridMaze2D maze, Point startCell, Point destCell)
     {
         MazeEdge entry = new(maze[startCell.Y, startCell.X],
             maze[startCell.Y, startCell.X].DirectedNeighbors[3]!);

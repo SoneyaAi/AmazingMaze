@@ -7,7 +7,7 @@ using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class PathfindingSystem(Maze maze)
+public class PathfindingSystem(MazeStructure mazeStructure)
     : EntityUpdateSystem(Aspect.All(typeof(PathfindingComponent), typeof(PathComponent)))
 {
     private ComponentMapper<PathfindingComponent> _pathfindingMapper;
@@ -36,11 +36,11 @@ public class PathfindingSystem(Maze maze)
             if (!pathComponent.RecalculateRequested)
                 continue;
 
-            var isStartInRoom = maze.Map[startCell.Y, startCell.X] > 1;
-            var isTargetInRoom = maze.Map[targetCell.Y, targetCell.X] > 1;
-            var targetRoom = maze.Map[targetCell.Y, targetCell.X];
+            var isStartInRoom = mazeStructure.Map[startCell.Y, startCell.X] > 1;
+            var isTargetInRoom = mazeStructure.Map[targetCell.Y, targetCell.X] > 1;
+            var targetRoom = mazeStructure.Map[targetCell.Y, targetCell.X];
             Point targetRoomEntrance  = new Point();// = maze.Rooms[maze.Map[targetCell.Y, targetCell.X]].EntryPath[0];
-            var isSameRoom = maze.Map[startCell.Y, startCell.X] == maze.Map[targetCell.Y, targetCell.X];
+            var isSameRoom = mazeStructure.Map[startCell.Y, startCell.X] == mazeStructure.Map[targetCell.Y, targetCell.X];
             if (isStartInRoom) // start is in room
             {
                 if (isSameRoom)
@@ -49,7 +49,7 @@ public class PathfindingSystem(Maze maze)
                     continue;
                 }
                 
-                var room = maze.Rooms[maze.Map[startCell.Y, startCell.X]];
+                var room = mazeStructure.Rooms[mazeStructure.Map[startCell.Y, startCell.X]];
                 path.Enqueue(room.EntryPath[1]);
                 path.Enqueue(room.EntryPath[0]);
                 startCell = room.EntryPath[0];
@@ -58,10 +58,10 @@ public class PathfindingSystem(Maze maze)
             }
 
             if (isTargetInRoom)
-                targetRoomEntrance = maze.Rooms[maze.Map[targetCell.Y, targetCell.X]].EntryPath[0];
+                targetRoomEntrance = mazeStructure.Rooms[mazeStructure.Map[targetCell.Y, targetCell.X]].EntryPath[0];
                 //targetCell = maze.Rooms[maze.Map[targetCell.Y, targetCell.X]].EntryPath[0];
             
-            var corridorsPath = maze.GetPath(startCell,   isTargetInRoom ? targetRoomEntrance : targetCell);
+            var corridorsPath = mazeStructure.GetPath(startCell,   isTargetInRoom ? targetRoomEntrance : targetCell);
             while (corridorsPath.Count > 0)
             {
                 path.Enqueue(corridorsPath.Dequeue());
@@ -69,7 +69,7 @@ public class PathfindingSystem(Maze maze)
             
             if (isTargetInRoom) 
             {
-                var room = maze.Rooms[targetRoom];
+                var room = mazeStructure.Rooms[targetRoom];
                 path.Enqueue(room.EntryPath[1]);
                 path.Enqueue(targetCell);
                 

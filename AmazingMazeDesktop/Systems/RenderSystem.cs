@@ -150,37 +150,37 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
         _spriteBatch.End();
         
         // FOW
-        var vp = graphicsDevice.Viewport;
-        var screenRect = new Rectangle(0, 0, vp.Width, vp.Height);
-        
-        Vector2 playerScreenPos = camera.WorldSpaceToScreen(_playerPosition);
-
-        Vector2 playerPosUV = new Vector2(
-            playerScreenPos.X / screenRect.Width,
-            playerScreenPos.Y / screenRect.Height);
-        
-
-        Assets.FogOfWarEffect.Parameters["FogColor"].SetValue(new Vector4(0f, 0f, 0f, 1f));
-        Assets.FogOfWarEffect.Parameters["PlayerPosPixels"].SetValue(playerScreenPos);
-        Assets.FogOfWarEffect.Parameters["Radius"].SetValue(128);
-        Assets.FogOfWarEffect.Parameters["Softness"].SetValue(128);
-        Assets.FogOfWarEffect.Parameters["TextureWidth"].SetValue(vp.Width);
-        Assets.FogOfWarEffect.Parameters["TextureHeight"].SetValue(vp.Height);
-        Assets.FogOfWarEffect.Parameters["Zoom"].SetValue(camera.Zoom);
-        _spriteBatch.Begin(
-            
-            SpriteSortMode.Immediate,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp,
-            DepthStencilState.None,
-            RasterizerState.CullNone,
-            effect: Assets.FogOfWarEffect
-        );
+        // var vp = graphicsDevice.Viewport;
+        // var screenRect = new Rectangle(0, 0, vp.Width, vp.Height);
+        //
+        // Vector2 playerScreenPos = camera.WorldSpaceToScreen(_playerPosition);
+        //
+        // Vector2 playerPosUV = new Vector2(
+        //     playerScreenPos.X / screenRect.Width,
+        //     playerScreenPos.Y / screenRect.Height);
+        //
+        //
+        // Assets.FogOfWarEffect.Parameters["FogColor"].SetValue(new Vector4(0f, 0f, 0f, 1f));
+        // Assets.FogOfWarEffect.Parameters["PlayerPosPixels"].SetValue(playerScreenPos);
+        // Assets.FogOfWarEffect.Parameters["Radius"].SetValue(128);
+        // Assets.FogOfWarEffect.Parameters["Softness"].SetValue(128);
+        // Assets.FogOfWarEffect.Parameters["TextureWidth"].SetValue(vp.Width);
+        // Assets.FogOfWarEffect.Parameters["TextureHeight"].SetValue(vp.Height);
+        // Assets.FogOfWarEffect.Parameters["Zoom"].SetValue(camera.Zoom);
+        // _spriteBatch.Begin(
+        //     
+        //     SpriteSortMode.Immediate,
+        //     BlendState.AlphaBlend,
+        //     SamplerState.PointClamp,
+        //     DepthStencilState.None,
+        //     RasterizerState.CullNone,
+        //     effect: Assets.FogOfWarEffect
+        // );
 
         //Debug.WriteLine($"fow: {_playerPosition}");
         // rysujemy po prostu biały prostokąt na cały ekran
-        _spriteBatch.Draw(Assets.WhitePlaceholderTexture, screenRect, Color.White);
-        _spriteBatch.End();
+        // _spriteBatch.Draw(Assets.WhitePlaceholderTexture, screenRect, Color.White);
+        // _spriteBatch.End();
         
     }
     

@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 
 namespace Labyrinthian;
 
-public class Room
+public class MazeStructureRoom
 {
     public int Id;
     public List<Point> Cells = new();

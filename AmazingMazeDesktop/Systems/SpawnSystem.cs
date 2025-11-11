@@ -14,7 +14,7 @@ public class SpawnSystem : EntityUpdateSystem
     private MathHelper.Random _random;
     private EntityFactory _entityFactory;
     private FastRandom rng = new();
-    public Maze Maze;
+    public MazeStructure MazeStructure;
     public SpawnSystem(EntityFactory factory) : base(Aspect.All(typeof(TagsComponent)))
     {
         _entityFactory = factory;
@@ -35,9 +35,9 @@ public class SpawnSystem : EntityUpdateSystem
         
         while (true)
         {
-            var x = rng.Next(0, Maze.Map.GetLength(1) -1);
-            var y = rng.Next(0, Maze.Map.GetLength(0) -1);
-            if (Maze.Map[y,x] != 0) 
+            var x = rng.Next(0, MazeStructure.Map.GetLength(1) -1);
+            var y = rng.Next(0, MazeStructure.Map.GetLength(0) -1);
+            if (MazeStructure.Map[y,x] != 0) 
                 continue;
             
             _entityFactory.BuildEntity(new EnemyBuilderArgs()

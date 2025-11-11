@@ -21,7 +21,7 @@ public class Main : Game
     private World _world;
     private AnimationController _spellcastAnimationController;
     private EntityFactory _entityFactory;
-    private Maze _maze;
+    private MazeStructure _mazeStructure;
     private Camera2D _camera;
     private CollisionSystem _collisionSystem;
     private MovementSystem _movementSystem;
@@ -42,20 +42,21 @@ public class Main : Game
 
     protected override void Initialize()
     {
+        GlobalRng.Initialize(12345);
         _collisionSystem = new CollisionSystem();
         _entityFactory = new EntityFactory(_collisionSystem);
         
-        _maze = new Maze(20, 20);
+        _mazeStructure = new MazeStructure(30, 20);
  
         _movementSystem = new MovementSystem();
         _spawnSystem = new SpawnSystem(_entityFactory);
         _camera = new Camera2D(GraphicsDevice.Viewport);
-        _movementSystem.Maze = _maze;
-        _spawnSystem.Maze = _maze;
+        _movementSystem.MazeStructure = _mazeStructure;
+        _spawnSystem.MazeStructure = _mazeStructure;
         _world = new WorldBuilder()
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
-            .AddSystem(new PathfindingSystem(_maze))
+            .AddSystem(new PathfindingSystem(_mazeStructure))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem())
@@ -82,11 +83,11 @@ public class Main : Game
         Assets.YellowPlaceholderTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
         Assets.YellowPlaceholderTexture.SetData([Color.Yellow]);
         
-        for (int y = 0; y < _maze.Map.GetLength(0); y++)
+        for (int y = 0; y < _mazeStructure.Map.GetLength(0); y++)
         {
-            for (int x = 0; x < _maze.Map.GetLength(1); x++)
+            for (int x = 0; x < _mazeStructure.Map.GetLength(1); x++)
             {
-                if (_maze.Map[y, x] != 1)
+                if (_mazeStructure.Map[y, x] != 1)
                     continue;
 
                 var wallEntity = _entityFactory.BuildEntity(new WallBuilderArgs()
@@ -131,11 +132,11 @@ public class Main : Game
         //     }
         //     Debug.Write("\n");
         // }
-        for (var y = 0; y < _maze.Map.GetLength(0); y++)
+        for (var y = 0; y < _mazeStructure.Map.GetLength(0); y++)
         {
-            for (var x = 0; x < _maze.Map.GetLength(1); x++)
+            for (var x = 0; x < _mazeStructure.Map.GetLength(1); x++)
             {
-                switch (_maze.Map[y, x])
+                switch (_mazeStructure.Map[y, x])
                 {
                     case 0:
                         _spriteBatch.Draw(Assets.WhitePlaceholderTexture, new Vector2(x, y) * EngineSettings.CellSize,

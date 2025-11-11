@@ -75,10 +75,11 @@ public class EntityFactory(CollisionSystem collisionSystem)
     private void BuildSpawner(Entity entity, SpawnerBuilderArgs args)
     {
         entity.Attach(new TagsComponent() { TagsList = { Tags.Spawner } });
-        entity.Attach(Assets.YellowPlaceholderTexture);
+        //entity.Attach(Assets.YellowPlaceholderTexture);
         entity.Attach(new Transform2(args.Position));
-        entity.Attach(new ColliderComponent(new RectangleF(args.Position,
-            Assets.YellowPlaceholderTexture.Bounds.Size.ToVector2() * args.Scale), entity.Id));
+        //entity.Attach(new ColliderComponent(new RectangleF(args.Position,
+        //    Assets.YellowPlaceholderTexture.Bounds.Size.ToVector2() * args.Scale), entity.Id));
+        entity.Attach((new SpawnerComponent(args.TimeToSpawn)));
     }
 
     private void BuildPlayer(Entity entity, PlayerBuilderArgs args)

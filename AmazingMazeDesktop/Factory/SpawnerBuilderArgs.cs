@@ -5,5 +5,5 @@ namespace AmazingMazeDesktop.Factory;
 public class SpawnerBuilderArgs : IBuilderArgs
 {
     public required Vector2 Position;
-    public required Vector2 Scale;
+    public required int TimeToSpawn;
 }

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Linq;
 using AmazingMazeDesktop.Factory;
 using AmazingMazeDesktop.Systems;
 using AmazingMazeDesktop.Components;
@@ -8,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
 using MonoGame.Extended.Animations;
+using MonoGame.Extended.Collections;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Graphics;
 using MonoGame.Extended.Input;
@@ -43,16 +45,18 @@ public class Main : Game
     protected override void Initialize()
     {
         GlobalRng.Initialize(12345);
+        
         _collisionSystem = new CollisionSystem();
         _entityFactory = new EntityFactory(_collisionSystem);
-        
-        _mazeStructure = new MazeStructure(30, 20);
+        int width = 20;
+        int height = 50;
+        int roomsCount = height * width / 100;
+        _mazeStructure = new MazeStructure(width, height, roomsCount);
  
         _movementSystem = new MovementSystem();
         _spawnSystem = new SpawnSystem(_entityFactory);
         _camera = new Camera2D(GraphicsDevice.Viewport);
         _movementSystem.MazeStructure = _mazeStructure;
-        _spawnSystem.MazeStructure = _mazeStructure;
         _world = new WorldBuilder()
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
@@ -101,6 +105,15 @@ public class Main : Game
         {
             Position = new Vector2(100, 100),
         });
+        foreach (var room in _mazeStructure.Rooms)
+        {
+            var spawnerPos = Conversions.CellToWorld(room.Value.Cells.ToList().Shuffle(GlobalRng.Random).First());
+            _entityFactory.BuildEntity(new SpawnerBuilderArgs()
+            {
+                Position = spawnerPos,
+                TimeToSpawn = 10
+            });
+        }
     }
 
     protected override void Update(GameTime gameTime)

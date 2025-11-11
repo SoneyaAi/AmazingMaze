@@ -6,7 +6,7 @@ namespace AmazingMazeDesktop.Maze.Underlay;
 public class UnderlayRoomsMap(int width, int height)
 {
     public int this[int y, int x] => _map[y, x];
-    
+
     private readonly int[,] _map = new int[height, width];
 
     public void Generate(int roomsCount)
@@ -25,7 +25,8 @@ public class UnderlayRoomsMap(int width, int height)
 
         var k = GlobalRng.Next(2) == 0 ? 2 : 3;
 
-        while (true)
+        int maxAttempts = 10;
+        for (var attempt = 0; attempt < maxAttempts; attempt++)
         {
             var row = GlobalRng.Next(0, rows - k + 1);
             var column = GlobalRng.Next(0, columns - k + 1);
@@ -41,9 +42,12 @@ public class UnderlayRoomsMap(int width, int height)
     private bool CanPlace(int row, int column, int k)
     {
         for (var i = 0; i < k; i++)
-        for (var j = 0; j < k; j++)
-            if (_map[row + i, column + j] != 0)
-                return false;
+        {
+            for (var j = 0; j < k; j++)
+                if (_map[row + i, column + j] != 0)
+                    return false;
+        }
+
         return true;
     }
 

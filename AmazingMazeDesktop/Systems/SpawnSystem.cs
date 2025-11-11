@@ -8,46 +8,35 @@ using MonoGame.Extended.Timers;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class SpawnSystem : EntityUpdateSystem
+public class SpawnSystem(EntityFactory factory) : EntityUpdateSystem(Aspect.All(typeof(SpawnerComponent)))
 {
-    private CountdownTimer _countdownTimer;
-    private MathHelper.Random _random;
-    private EntityFactory _entityFactory;
-    private FastRandom rng = new();
-    public MazeStructure MazeStructure;
-    public SpawnSystem(EntityFactory factory) : base(Aspect.All(typeof(TagsComponent)))
-    {
-        _entityFactory = factory;
-        _countdownTimer = new CountdownTimer(10);
-        _countdownTimer.Start();
-    }
+    private ComponentMapper<SpawnerComponent> _spawnerMapper;
+    private ComponentMapper<Transform2> _transformMapper;
 
     public override void Initialize(IComponentMapperService mapperService)
     {
-        
+        _spawnerMapper = mapperService.GetMapper<SpawnerComponent>();
+        _transformMapper = mapperService.GetMapper<Transform2>();
     }
 
     public override void Update(GameTime gameTime)
     {
-        _countdownTimer.Update(gameTime);
-        if (_countdownTimer.State != TimerState.Completed) 
-            return;
-        
-        while (true)
+        foreach (var entity in ActiveEntities)
         {
-            var x = rng.Next(0, MazeStructure.Map.GetLength(1) -1);
-            var y = rng.Next(0, MazeStructure.Map.GetLength(0) -1);
-            if (MazeStructure.Map[y,x] != 0) 
+            var transform = _transformMapper.Get(entity);
+            var spawner = _spawnerMapper.Get(entity);
+            var timer = spawner.CountdownTimer;
+            timer.Update(gameTime);
+            if (timer.State != TimerState.Completed) 
                 continue;
             
-            _entityFactory.BuildEntity(new EnemyBuilderArgs()
+            factory.BuildEntity(new EnemyBuilderArgs()
             {
-                Position = Conversions.CellToWorld(new Point(x,y)),
+                Position = transform.Position,
                 Speed = 30
             });
-            break;
+            
+            timer.Restart();
         }
-
-        _countdownTimer.Restart();
     }
 }

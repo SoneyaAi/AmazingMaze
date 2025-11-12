@@ -17,11 +17,8 @@ namespace AmazingMazeDesktop;
 public class MazeStructure
 {
     public int[,] Map;
-
-    // public IReadOnlyDictionary<int, List<Point>> Rooms =>  _roomIdCellsDictionary;
     public IReadOnlyDictionary<int, MazeStructureRoom> Rooms => _roomsDictionary;
 
-    //private Dictionary<int, List<Point>> _roomIdCellsDictionary = new();
     private Dictionary<int, MazeStructureRoom> _roomsDictionary = new();
     private readonly UnderlayMaze _underlayMaze = new();
 

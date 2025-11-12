@@ -28,7 +28,7 @@ public class Main : Game
     private CollisionSystem _collisionSystem;
     private MovementSystem _movementSystem;
     private SpawnSystem _spawnSystem;
-    
+    private WorldLevel _worldLevel;
     private int scale = 64;
 
     public Main()
@@ -50,7 +50,7 @@ public class Main : Game
         _entityFactory = new EntityFactory(_collisionSystem);
         int width = 20;
         int height = 50;
-        int roomsCount = height * width / 100;
+        int roomsCount = height * width / 200;
         _mazeStructure = new MazeStructure(width, height, roomsCount);
  
         _movementSystem = new MovementSystem();
@@ -72,7 +72,7 @@ public class Main : Game
 
         Components.Add(_world);
         _entityFactory.SetWorld(_world);
-  
+        _worldLevel = new(_mazeStructure);
         base.Initialize();
     }
 
@@ -86,6 +86,8 @@ public class Main : Game
         Assets.WhitePlaceholderTexture.SetData([Color.White]);
         Assets.YellowPlaceholderTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
         Assets.YellowPlaceholderTexture.SetData([Color.Yellow]);
+        Assets.GreenPlaceholderTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
+        Assets.GreenPlaceholderTexture.SetData([Color.Green]);
         
         for (int y = 0; y < _mazeStructure.Map.GetLength(0); y++)
         {
@@ -162,9 +164,24 @@ public class Main : Game
                             Vector2.Zero, scale, SpriteEffects.None, 1f);
                         break;
                     case >= 2:
-                        _spriteBatch.Draw(Assets.YellowPlaceholderTexture, new Vector2(x, y) * EngineSettings.CellSize,
-                            null, Color.White, 0f,
-                            Vector2.Zero, scale, SpriteEffects.None, 1f);
+                        if (_worldLevel.GetFathestRooms().a == _mazeStructure.Map[y, x] ||
+                            _worldLevel.GetFathestRooms().b == _mazeStructure.Map[y, x])
+                        {
+                            _spriteBatch.Draw(Assets.GreenPlaceholderTexture,
+                                new Vector2(x, y) * EngineSettings.CellSize,
+                                null, Color.White, 0f,
+                                Vector2.Zero, scale, SpriteEffects.None, 1f);
+                        }
+                        else
+                        {
+                            
+                            
+                            _spriteBatch.Draw(Assets.YellowPlaceholderTexture,
+                                new Vector2(x, y) * EngineSettings.CellSize,
+                                null, Color.White, 0f,
+                                Vector2.Zero, scale, SpriteEffects.None, 1f);
+                        }
+
                         break;
                 }
             }

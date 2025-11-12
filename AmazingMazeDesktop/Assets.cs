@@ -32,7 +32,7 @@ public static class Assets
         ]);
     }
 
-    public static Texture2D OrangePlaceholderTexture, WhitePlaceholderTexture, YellowPlaceholderTexture;
+    public static Texture2D OrangePlaceholderTexture, WhitePlaceholderTexture, YellowPlaceholderTexture, GreenPlaceholderTexture;
 
     public static SpriteSheet BodyBodiesMaleLight,  HeadHeadsHumanMaleLight,   TorsoArmourLeatherMaleLeather, WeaponMagicWandMaleWand;
 

@@ -3,6 +3,9 @@ using System.Linq;
 using AmazingMazeDesktop.Factory;
 using AmazingMazeDesktop.Systems;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.WorldGeneration;
+using AmazingMazeDesktop.WorldGeneration.Configs;
+using AmazingMazeDesktop.WorldModel;
 using Labyrinthian;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -23,44 +26,57 @@ public class Main : Game
     private World _world;
     private AnimationController _spellcastAnimationController;
     private EntityFactory _entityFactory;
-    private MazeStructure _mazeStructure;
+
+    //private MazeStructure _mazeStructure;
     private Camera2D _camera;
     private CollisionSystem _collisionSystem;
     private MovementSystem _movementSystem;
     private SpawnSystem _spawnSystem;
     private WorldLevel _worldLevel;
     private int scale = 64;
+    private Dungeon _dungeon;
 
     public Main()
     {
         _graphics = new GraphicsDeviceManager(this);
         _graphics.PreferredBackBufferHeight = 1080;
         _graphics.PreferredBackBufferWidth = 1920;
-        
+
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
-        
     }
 
     protected override void Initialize()
     {
         GlobalRng.Initialize(12345);
-        
+
         _collisionSystem = new CollisionSystem();
         _entityFactory = new EntityFactory(_collisionSystem);
-        int width = 20;
-        int height = 50;
-        int roomsCount = height * width / 200;
-        _mazeStructure = new MazeStructure(width, height, roomsCount);
- 
+        //int roomsCount = height * width / 200;
+        //_mazeStructure = new MazeStructure(width, height, roomsCount);
+
+        _dungeon = new DungeonGenerator().Generate(new ConfigsPackage()
+        {
+            DungeonConfig = new DungeonConfig()
+            {
+                Seed = 1234
+            },
+            LevelConfig = new LevelConfig()
+            {
+                Seed = 1234,
+                Height = 30,
+                Width = 20,
+            }
+        });
+
         _movementSystem = new MovementSystem();
         _spawnSystem = new SpawnSystem(_entityFactory);
         _camera = new Camera2D(GraphicsDevice.Viewport);
-        _movementSystem.MazeStructure = _mazeStructure;
+        _movementSystem.MazeStructure = _dungeon.Levels.First().MazeStructure;
         _world = new WorldBuilder()
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
-            .AddSystem(new PathfindingSystem(_mazeStructure))
+            .AddSystem(new PathfindingSystem(_dungeon.Levels.First().MazeStructure))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem())
@@ -72,7 +88,7 @@ public class Main : Game
 
         Components.Add(_world);
         _entityFactory.SetWorld(_world);
-        _worldLevel = new(_mazeStructure);
+        _worldLevel = new(_dungeon.Levels.First().MazeStructure);
         base.Initialize();
     }
 
@@ -88,12 +104,12 @@ public class Main : Game
         Assets.YellowPlaceholderTexture.SetData([Color.Yellow]);
         Assets.GreenPlaceholderTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
         Assets.GreenPlaceholderTexture.SetData([Color.Green]);
-        
-        for (int y = 0; y < _mazeStructure.Map.GetLength(0); y++)
+
+        for (int y = 0; y < _dungeon.Levels.First().MazeStructure.Map.GetLength(0); y++)
         {
-            for (int x = 0; x < _mazeStructure.Map.GetLength(1); x++)
+            for (int x = 0; x < _dungeon.Levels.First().MazeStructure.Map.GetLength(1); x++)
             {
-                if (_mazeStructure.Map[y, x] != 1)
+                if (_dungeon.Levels.First().MazeStructure.Map[y, x] != 1)
                     continue;
 
                 var wallEntity = _entityFactory.BuildEntity(new WallBuilderArgs()
@@ -103,11 +119,12 @@ public class Main : Game
                 _collisionSystem.AddEntity(wallEntity);
             }
         }
+
         _entityFactory.BuildEntity(new PlayerBuilderArgs()
         {
             Position = new Vector2(100, 100),
         });
-        foreach (var room in _mazeStructure.Rooms)
+        foreach (var room in _dungeon.Levels.First().MazeStructure.Rooms)
         {
             var spawnerPos = Conversions.CellToWorld(room.Value.Cells.ToList().Shuffle(GlobalRng.Random).First());
             _entityFactory.BuildEntity(new SpawnerBuilderArgs()
@@ -116,6 +133,12 @@ public class Main : Game
                 TimeToSpawn = 10
             });
         }
+
+        var dungeon = new DungeonGenerator().Generate(new ConfigsPackage()
+        {
+            DungeonConfig = new DungeonConfig() { Seed = 1234 },
+            LevelConfig = new LevelConfig() { Seed = 1234 }
+        });
     }
 
     protected override void Update(GameTime gameTime)
@@ -147,11 +170,11 @@ public class Main : Game
         //     }
         //     Debug.Write("\n");
         // }
-        for (var y = 0; y < _mazeStructure.Map.GetLength(0); y++)
+        for (var y = 0; y < _dungeon.Levels.First().MazeStructure.Map.GetLength(0); y++)
         {
-            for (var x = 0; x < _mazeStructure.Map.GetLength(1); x++)
+            for (var x = 0; x < _dungeon.Levels.First().MazeStructure.Map.GetLength(1); x++)
             {
-                switch (_mazeStructure.Map[y, x])
+                switch (_dungeon.Levels.First().MazeStructure.Map[y, x])
                 {
                     case 0:
                         _spriteBatch.Draw(Assets.WhitePlaceholderTexture, new Vector2(x, y) * EngineSettings.CellSize,
@@ -164,8 +187,8 @@ public class Main : Game
                             Vector2.Zero, scale, SpriteEffects.None, 1f);
                         break;
                     case >= 2:
-                        if (_worldLevel.GetFathestRooms().a == _mazeStructure.Map[y, x] ||
-                            _worldLevel.GetFathestRooms().b == _mazeStructure.Map[y, x])
+                        if (_worldLevel.GetFathestRooms().a == _dungeon.Levels.First().MazeStructure.Map[y, x] ||
+                            _worldLevel.GetFathestRooms().b == _dungeon.Levels.First().MazeStructure.Map[y, x])
                         {
                             _spriteBatch.Draw(Assets.GreenPlaceholderTexture,
                                 new Vector2(x, y) * EngineSettings.CellSize,
@@ -174,8 +197,6 @@ public class Main : Game
                         }
                         else
                         {
-                            
-                            
                             _spriteBatch.Draw(Assets.YellowPlaceholderTexture,
                                 new Vector2(x, y) * EngineSettings.CellSize,
                                 null, Color.White, 0f,

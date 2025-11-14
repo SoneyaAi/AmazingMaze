@@ -18,7 +18,7 @@ public class MovementSystem() : EntityUpdateSystem(Aspect.All(typeof(MovementCom
     private ComponentMapper<MovementComponent> _movementMapper;
     private ComponentMapper<StateComponent> _stateMapper;
     private ComponentMapper<PathComponent> _pathMapper;
-    public const float WaypointRadius = EngineSettings.CellSize / 8;
+    public static float WaypointRadius = EngineSettings.CellSize / 8;
 
     public override void Initialize(IComponentMapperService mapperService)
     {

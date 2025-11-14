@@ -9,4 +9,6 @@ public class Level
     public MazeStructure MazeStructure { get; set; }
     public TileMap TileMap { get; set; }
     public List<Room> Rooms { get; set; } = [];
+    public int EntryRoomId { get; set; }
+    public int ExitRoomId { get; set; }
 }

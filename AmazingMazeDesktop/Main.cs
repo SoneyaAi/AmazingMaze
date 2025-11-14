@@ -32,8 +32,6 @@ public class Main : Game
     private CollisionSystem _collisionSystem;
     private MovementSystem _movementSystem;
     private SpawnSystem _spawnSystem;
-    private WorldLevel _worldLevel;
-    private int scale = 64;
     private Dungeon _dungeon;
 
     public Main()
@@ -88,7 +86,6 @@ public class Main : Game
 
         Components.Add(_world);
         _entityFactory.SetWorld(_world);
-        _worldLevel = new(_dungeon.Levels.First().MazeStructure);
         base.Initialize();
     }
 
@@ -114,7 +111,8 @@ public class Main : Game
 
                 var wallEntity = _entityFactory.BuildEntity(new WallBuilderArgs()
                 {
-                    Position = new Vector2(x * scale + 32, y * scale + 32),
+                    Position = new Vector2(x * EngineSettings.CellSize + EngineSettings.CellSize * 0.5f,
+                        y * EngineSettings.CellSize + EngineSettings.CellSize * 0.5f),
                 });
                 _collisionSystem.AddEntity(wallEntity);
             }
@@ -179,28 +177,28 @@ public class Main : Game
                     case 0:
                         _spriteBatch.Draw(Assets.WhitePlaceholderTexture, new Vector2(x, y) * EngineSettings.CellSize,
                             null, Color.White, 0f,
-                            Vector2.Zero, scale, SpriteEffects.None, 1f);
+                            Vector2.Zero, EngineSettings.CellSize, SpriteEffects.None, 1f);
                         break;
                     case 1:
                         _spriteBatch.Draw(Assets.OrangePlaceholderTexture, new Vector2(x, y) * EngineSettings.CellSize,
                             null, Color.White, 0f,
-                            Vector2.Zero, scale, SpriteEffects.None, 1f);
+                            Vector2.Zero, EngineSettings.CellSize, SpriteEffects.None, 1f);
                         break;
                     case >= 2:
-                        if (_worldLevel.GetFathestRooms().a == _dungeon.Levels.First().MazeStructure.Map[y, x] ||
-                            _worldLevel.GetFathestRooms().b == _dungeon.Levels.First().MazeStructure.Map[y, x])
+                        if (_dungeon.Levels.First().EntryRoomId == _dungeon.Levels.First().MazeStructure.Map[y, x] ||
+                            _dungeon.Levels.First().ExitRoomId == _dungeon.Levels.First().MazeStructure.Map[y, x])
                         {
                             _spriteBatch.Draw(Assets.GreenPlaceholderTexture,
                                 new Vector2(x, y) * EngineSettings.CellSize,
                                 null, Color.White, 0f,
-                                Vector2.Zero, scale, SpriteEffects.None, 1f);
+                                Vector2.Zero, EngineSettings.CellSize, SpriteEffects.None, 1f);
                         }
                         else
                         {
                             _spriteBatch.Draw(Assets.YellowPlaceholderTexture,
                                 new Vector2(x, y) * EngineSettings.CellSize,
                                 null, Color.White, 0f,
-                                Vector2.Zero, scale, SpriteEffects.None, 1f);
+                                Vector2.Zero, EngineSettings.CellSize, SpriteEffects.None, 1f);
                         }
 
                         break;

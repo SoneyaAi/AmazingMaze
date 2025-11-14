@@ -6,7 +6,6 @@ public static class Conversions
 {
     public static Point WorldToCell(Vector2 world)
     {
-        
         return (world / EngineSettings.CellSize).ToPoint();
     }
 

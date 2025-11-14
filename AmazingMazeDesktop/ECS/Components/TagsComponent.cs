@@ -2,14 +2,7 @@ using System.Collections.Generic;
 
 namespace AmazingMazeDesktop.Components;
 
-public enum Tags
-{
-    Player,
-    Projectile,
-    Enemy,
-    Spawner,
-    Wall
-}
+
 
 public class TagsComponent
 {

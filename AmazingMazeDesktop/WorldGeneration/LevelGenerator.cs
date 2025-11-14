@@ -48,7 +48,6 @@ public class LevelGenerator()
             level.SpawnPoints.Add(spawnPoint);
         }
 
-
         return level;
     }
 }

@@ -56,7 +56,7 @@ public class ECSWorld
             _entityFactory.BuildEntity(new SpawnerBuilderArgs()
             {
                 Position = spawnerPos,
-                TimeToSpawn = 10
+                TimeToSpawn = 20
             });
         }
         

@@ -31,16 +31,16 @@ public class EntityFactory(CollisionSystem collisionSystem)
                 BuildSpawner(entity, builderArgs);
                 break;
             case PlayerBuilderArgs builderArgs:
-                BuildPlayer(entity,builderArgs);
+                BuildPlayer(entity, builderArgs);
                 break;
             case WallBuilderArgs builderArgs:
                 BuildWall(entity, builderArgs);
                 break;
         }
 
-        if(entity.Has<ColliderComponent>())
+        if (entity.Has<ColliderComponent>())
             collisionSystem.AddEntity(entity.Id);
-        
+
         return entity.Id;
     }
 
@@ -48,6 +48,7 @@ public class EntityFactory(CollisionSystem collisionSystem)
     {
         entity.Attach(Assets.OrangePlaceholderTexture);
         entity.Attach(new TagsComponent() { TagsList = { Tags.Projectile } });
+        //entity.Attach(new TagsComponent() { TagsList = { Tags.Projectile } });
         entity.Attach(new Transform2(args.Position, scale: args.Scale));
         entity.Attach(new MovementComponent()
         {
@@ -67,7 +68,7 @@ public class EntityFactory(CollisionSystem collisionSystem)
         entity.Attach(new Transform2(args.Position));
         entity.Attach(new MovementComponent() { Speed = args.Speed });
         entity.Attach(new ColliderComponent(new RectangleF(args.Position,
-            new Vector2(32,48)), entity.Id));
+            new Vector2(32, 48)), entity.Id));
         entity.Attach(new PathComponent());
         entity.Attach(new PathfindingComponent());
     }
@@ -91,14 +92,14 @@ public class EntityFactory(CollisionSystem collisionSystem)
         entity.Attach(new AnimatorComponent());
         entity.Attach(new StateComponent());
         entity.Attach(new ColliderComponent(new RectangleF(args.Position,
-            new Vector2(32,48)), entity.Id));
+            new Vector2(32, 48)), entity.Id));
     }
-    
+
     private void BuildWall(Entity entity, WallBuilderArgs args)
     {
         entity.Attach(new TagsComponent() { TagsList = { Tags.Wall } });
         entity.Attach(new Transform2(args.Position));
         entity.Attach(new ColliderComponent(new RectangleF(args.Position,
-            new Vector2(64,64)), entity.Id, "Walls"));
+            new Vector2(64, 64)), entity.Id, "Walls"));
     }
 }

@@ -45,10 +45,6 @@ public class Main : Game
     {
         GlobalRng.Initialize(12345);
 
-
-        //int roomsCount = height * width / 200;
-        //_mazeStructure = new MazeStructure(width, height, roomsCount);
-
         _dungeon = new DungeonGenerator().Generate(new ConfigsPackage()
         {
             DungeonConfig = new DungeonConfig()
@@ -62,7 +58,6 @@ public class Main : Game
                 Width = 20,
             }
         });
-
 
         _camera = new Camera2D(GraphicsDevice.Viewport);
 

@@ -21,9 +21,8 @@ public class ECSWorld
     {
         _collisionSystem = new CollisionSystem();
         _entityFactory = new EntityFactory(_collisionSystem);
-        _movementSystem = new MovementSystem();
         _spawnSystem = new SpawnSystem(_entityFactory);
-
+        _movementSystem = new MovementSystem();
         _movementSystem.MazeStructure = dungeon.Levels.First().MazeStructure;
 
         World = new WorldBuilder()
@@ -38,9 +37,9 @@ public class ECSWorld
             .AddSystem(new CameraSystem(camera))
             .AddSystem(new RenderSystem(graphicsDevice, camera))
             .Build();
-
-
         _entityFactory.SetWorld(World);
+        
+        // Spawns
         foreach (var spawner in dungeon.Levels.First().SpawnPoints)
         {
             if (spawner.IsPlayerSpawn)

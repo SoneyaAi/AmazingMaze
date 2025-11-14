@@ -25,6 +25,7 @@ public enum TriggerType
 
 public enum TriggerAction
 {
+    LoadPreviousLevel,
     LoadNextLevel,
     OpenDoor,
     ShowMessage

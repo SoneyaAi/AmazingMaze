@@ -3,6 +3,7 @@ using System.Linq;
 using AmazingMazeDesktop.Factory;
 using AmazingMazeDesktop.Systems;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.ECS;
 using AmazingMazeDesktop.WorldGeneration;
 using AmazingMazeDesktop.WorldGeneration.Configs;
 using AmazingMazeDesktop.WorldModel;
@@ -23,16 +24,12 @@ public class Main : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private World _world;
     private AnimationController _spellcastAnimationController;
-    private EntityFactory _entityFactory;
 
-    //private MazeStructure _mazeStructure;
     private Camera2D _camera;
-    private CollisionSystem _collisionSystem;
-    private MovementSystem _movementSystem;
-    private SpawnSystem _spawnSystem;
+
     private Dungeon _dungeon;
+    private ECSWorld _ecsWorld;
 
     public Main()
     {
@@ -48,8 +45,7 @@ public class Main : Game
     {
         GlobalRng.Initialize(12345);
 
-        _collisionSystem = new CollisionSystem();
-        _entityFactory = new EntityFactory(_collisionSystem);
+
         //int roomsCount = height * width / 200;
         //_mazeStructure = new MazeStructure(width, height, roomsCount);
 
@@ -67,25 +63,9 @@ public class Main : Game
             }
         });
 
-        _movementSystem = new MovementSystem();
-        _spawnSystem = new SpawnSystem(_entityFactory);
-        _camera = new Camera2D(GraphicsDevice.Viewport);
-        _movementSystem.MazeStructure = _dungeon.Levels.First().MazeStructure;
-        _world = new WorldBuilder()
-            .AddSystem(new PlayerControlSystem())
-            .AddSystem(_spawnSystem)
-            .AddSystem(new PathfindingSystem(_dungeon.Levels.First().MazeStructure))
-            .AddSystem(_movementSystem)
-            .AddSystem(new ShootingSystem(_entityFactory))
-            .AddSystem(new EnemyAiSystem())
-            .AddSystem(_collisionSystem)
-            .AddSystem(new StateSystem())
-            .AddSystem(new CameraSystem(_camera))
-            .AddSystem(new RenderSystem(GraphicsDevice, _camera))
-            .Build();
 
-        Components.Add(_world);
-        _entityFactory.SetWorld(_world);
+        _camera = new Camera2D(GraphicsDevice.Viewport);
+
         base.Initialize();
     }
 
@@ -102,41 +82,9 @@ public class Main : Game
         Assets.GreenPlaceholderTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
         Assets.GreenPlaceholderTexture.SetData([Color.Green]);
 
-        for (int y = 0; y < _dungeon.Levels.First().MazeStructure.Map.GetLength(0); y++)
-        {
-            for (int x = 0; x < _dungeon.Levels.First().MazeStructure.Map.GetLength(1); x++)
-            {
-                if (_dungeon.Levels.First().MazeStructure.Map[y, x] != 1)
-                    continue;
-
-                var wallEntity = _entityFactory.BuildEntity(new WallBuilderArgs()
-                {
-                    Position = new Vector2(x * EngineSettings.CellSize + EngineSettings.CellSize * 0.5f,
-                        y * EngineSettings.CellSize + EngineSettings.CellSize * 0.5f),
-                });
-                _collisionSystem.AddEntity(wallEntity);
-            }
-        }
-
-        _entityFactory.BuildEntity(new PlayerBuilderArgs()
-        {
-            Position = new Vector2(100, 100),
-        });
-        foreach (var room in _dungeon.Levels.First().MazeStructure.Rooms)
-        {
-            var spawnerPos = Conversions.CellToWorld(room.Value.Cells.ToList().Shuffle(GlobalRng.Random).First());
-            _entityFactory.BuildEntity(new SpawnerBuilderArgs()
-            {
-                Position = spawnerPos,
-                TimeToSpawn = 10
-            });
-        }
-
-        var dungeon = new DungeonGenerator().Generate(new ConfigsPackage()
-        {
-            DungeonConfig = new DungeonConfig() { Seed = 1234 },
-            LevelConfig = new LevelConfig() { Seed = 1234 }
-        });
+        _ecsWorld = new ECSWorld();
+        _ecsWorld.Initialize(_dungeon, _camera, GraphicsDevice);
+        Components.Add(_ecsWorld.World);
     }
 
     protected override void Update(GameTime gameTime)
@@ -147,7 +95,7 @@ public class Main : Game
 
         KeyboardExtended.Update();
         MouseExtended.Update();
-        _world.Update(gameTime);
+        _ecsWorld.Update(gameTime);
 
         base.Update(gameTime);
     }
@@ -156,7 +104,7 @@ public class Main : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        _world.Draw(gameTime);
+        _ecsWorld.Draw(gameTime);
 
         _spriteBatch.Begin(transformMatrix: _camera.GetTransformation());
         // Draw maze background

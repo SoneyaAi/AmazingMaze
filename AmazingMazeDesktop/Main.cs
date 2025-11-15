@@ -27,9 +27,9 @@ public class Main : Game
     private AnimationController _spellcastAnimationController;
 
     private Camera2D _camera;
-
-    private Dungeon _dungeon;
+    private GameContext _gameContext;
     private ECSWorld _ecsWorld;
+    private ConfigsPackage _configs;
 
     public Main()
     {
@@ -45,7 +45,7 @@ public class Main : Game
     {
         GlobalRng.Initialize(12345);
 
-        _dungeon = new DungeonGenerator().Generate(new ConfigsPackage()
+        _configs = new ConfigsPackage()
         {
             DungeonConfig = new DungeonConfig()
             {
@@ -57,8 +57,8 @@ public class Main : Game
                 Height = 30,
                 Width = 20,
             }
-        });
-
+        };
+        
         _camera = new Camera2D(GraphicsDevice.Viewport);
 
         base.Initialize();
@@ -77,8 +77,10 @@ public class Main : Game
         Assets.GreenPlaceholderTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
         Assets.GreenPlaceholderTexture.SetData([Color.Green]);
 
+
+        _gameContext = new GameContext(_configs);
         _ecsWorld = new ECSWorld();
-        _ecsWorld.Initialize(_dungeon, _camera, GraphicsDevice);
+        _ecsWorld.Initialize(_gameContext, _camera, GraphicsDevice);
         Components.Add(_ecsWorld.World);
     }
 
@@ -111,11 +113,11 @@ public class Main : Game
         //     }
         //     Debug.Write("\n");
         // }
-        for (var y = 0; y < _dungeon.Levels.First().MazeStructure.Map.GetLength(0); y++)
+        for (var y = 0; y < _gameContext.Dungeon.Levels.First().MazeStructure.Map.GetLength(0); y++)
         {
-            for (var x = 0; x < _dungeon.Levels.First().MazeStructure.Map.GetLength(1); x++)
+            for (var x = 0; x < _gameContext.Dungeon.Levels.First().MazeStructure.Map.GetLength(1); x++)
             {
-                switch (_dungeon.Levels.First().MazeStructure.Map[y, x])
+                switch (_gameContext.Dungeon.Levels.First().MazeStructure.Map[y, x])
                 {
                     case 0:
                         _spriteBatch.Draw(Assets.WhitePlaceholderTexture, new Vector2(x, y) * EngineSettings.CellSize,
@@ -128,8 +130,8 @@ public class Main : Game
                             Vector2.Zero, EngineSettings.CellSize, SpriteEffects.None, 1f);
                         break;
                     case >= 2:
-                        if (_dungeon.Levels.First().EntryRoomId == _dungeon.Levels.First().MazeStructure.Map[y, x] ||
-                            _dungeon.Levels.First().ExitRoomId == _dungeon.Levels.First().MazeStructure.Map[y, x])
+                        if (_gameContext.Dungeon.Levels.First().EntryRoomId == _gameContext.Dungeon.Levels.First().MazeStructure.Map[y, x] ||
+                            _gameContext.Dungeon.Levels.First().ExitRoomId == _gameContext.Dungeon.Levels.First().MazeStructure.Map[y, x])
                         {
                             _spriteBatch.Draw(Assets.GreenPlaceholderTexture,
                                 new Vector2(x, y) * EngineSettings.CellSize,

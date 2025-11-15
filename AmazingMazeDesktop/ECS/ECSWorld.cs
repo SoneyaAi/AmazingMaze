@@ -17,18 +17,19 @@ public class ECSWorld
     private SpawnSystem _spawnSystem;
     private EntityFactory _entityFactory;
 
-    public void Initialize(Dungeon dungeon, Camera2D camera, GraphicsDevice graphicsDevice)
+    public void Initialize(GameContext context, Camera2D camera, GraphicsDevice graphicsDevice)
     {
         _collisionSystem = new CollisionSystem();
         _entityFactory = new EntityFactory(_collisionSystem);
         _spawnSystem = new SpawnSystem(_entityFactory);
         _movementSystem = new MovementSystem();
-        _movementSystem.MazeStructure = dungeon.Levels.First().MazeStructure;
+        _movementSystem.MazeStructure = context.Dungeon.Levels.First().MazeStructure;
 
         World = new WorldBuilder()
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
-            .AddSystem(new PathfindingSystem(dungeon.Levels.First().MazeStructure))
+            .AddSystem(new TriggersSystem(context))
+            .AddSystem(new PathfindingSystem(context.Dungeon.Levels.First().MazeStructure))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem())
@@ -40,7 +41,7 @@ public class ECSWorld
         _entityFactory.SetWorld(World);
         
         // Spawns
-        foreach (var spawner in dungeon.Levels.First().SpawnPoints)
+        foreach (var spawner in context.Dungeon.Levels.First().SpawnPoints)
         {
             if (spawner.IsPlayerSpawn)
             {
@@ -59,11 +60,11 @@ public class ECSWorld
             });
         }
         
-        for (int y = 0; y < dungeon.Levels.First().MazeStructure.Map.GetLength(0); y++)
+        for (int y = 0; y < context.Dungeon.Levels.First().MazeStructure.Map.GetLength(0); y++)
         {
-            for (int x = 0; x < dungeon.Levels.First().MazeStructure.Map.GetLength(1); x++)
+            for (int x = 0; x < context.Dungeon.Levels.First().MazeStructure.Map.GetLength(1); x++)
             {
-                if (dungeon.Levels.First().MazeStructure.Map[y, x] != 1)
+                if (context.Dungeon.Levels.First().MazeStructure.Map[y, x] != 1)
                     continue;
 
                 var wallEntity = _entityFactory.BuildEntity(new WallBuilderArgs()

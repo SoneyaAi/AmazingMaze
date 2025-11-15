@@ -5,5 +5,6 @@ namespace AmazingMazeDesktop.WorldModel;
 public class Trigger
 {
     public Point TileCoordinates { get; set; }
-    public bool IsPlayerSpawn { get; set; } = false;
+    public TriggerType TriggerType { get; set; }
+    public TriggerAction Action { get; set; }
 }

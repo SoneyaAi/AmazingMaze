@@ -9,7 +9,7 @@ public class GameContext
     public Dungeon Dungeon => _dungeon;
     public Level CurrentLevel { get; private set; }
     
-    private int _currentLevelIndex;
+    private int _currentLevelIndex = 0;
     private Dungeon _dungeon;
     private ConfigsPackage _configs;
 
@@ -17,6 +17,7 @@ public class GameContext
     {
         _configs = configs;
         _dungeon = new DungeonGenerator().Generate(_configs);
+        CurrentLevel = _dungeon.Levels[_currentLevelIndex];
     }
 
 

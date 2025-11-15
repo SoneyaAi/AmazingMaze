@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.ECS.Components;
 using AmazingMazeDesktop.Systems;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
@@ -35,6 +36,9 @@ public class EntityFactory(CollisionSystem collisionSystem)
                 break;
             case WallBuilderArgs builderArgs:
                 BuildWall(entity, builderArgs);
+                break;
+            case TriggerBuilderArgs builderArgs:
+                BuildTrigger(entity, builderArgs);
                 break;
         }
 
@@ -81,6 +85,17 @@ public class EntityFactory(CollisionSystem collisionSystem)
         //entity.Attach(new ColliderComponent(new RectangleF(args.Position,
         //    Assets.YellowPlaceholderTexture.Bounds.Size.ToVector2() * args.Scale), entity.Id));
         entity.Attach((new SpawnerComponent(args.TimeToSpawn)));
+    }
+    
+    private void BuildTrigger(Entity entity, TriggerBuilderArgs args)
+    {
+        entity.Attach(new TagsComponent() { TagsList = { Tags.Trigger } });
+        entity.Attach(new Transform2(args.Position));
+        entity.Attach((new TriggerComponent()
+        {
+            Action = args.Action,
+            Type = args.Type,
+        }));
     }
 
     private void BuildPlayer(Entity entity, PlayerBuilderArgs args)

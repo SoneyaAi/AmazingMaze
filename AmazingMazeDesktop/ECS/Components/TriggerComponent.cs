@@ -4,7 +4,7 @@ public class TriggerComponent
 {
         public bool IsArmed;
         public bool IsTriggered;
-        public TriggerType Type;      // Enter, Exit, Once, Many, itp.
-        public TriggerAction Action;  // np. LoadNextLevel, OpenDoor itp.
+        public required TriggerType Type;     
+        public required TriggerAction Action;
         public int ActivatingEntity;
 }

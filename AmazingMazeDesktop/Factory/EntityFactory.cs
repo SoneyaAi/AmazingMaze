@@ -96,6 +96,8 @@ public class EntityFactory(CollisionSystem collisionSystem)
             Action = args.Action,
             Type = args.Type,
         }));
+        entity.Attach(new ColliderComponent(new RectangleF(args.Position,
+            new Vector2(EngineSettings.CellSize, EngineSettings.CellSize)), entity.Id));
     }
 
     private void BuildPlayer(Entity entity, PlayerBuilderArgs args)

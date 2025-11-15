@@ -11,7 +11,7 @@ using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class CollisionSystem() : EntityUpdateSystem(Aspect.All(typeof(ColliderComponent)))
+public class CollisionSystem(GameContext context) : EntityUpdateSystem(Aspect.All(typeof(ColliderComponent)))
 {
     private CollisionComponent _collisionComponent;
     private ComponentMapper<ColliderComponent> _colliderMapper;
@@ -26,7 +26,7 @@ public class CollisionSystem() : EntityUpdateSystem(Aspect.All(typeof(ColliderCo
         _tagsMapper = mapperService.GetMapper<TagsComponent>();
         _triggerMapper = mapperService.GetMapper<TriggerComponent>();
 
-        _collisionComponent = new CollisionComponent(new RectangleF(0, 0, 1300, 720));
+        _collisionComponent = new CollisionComponent(new RectangleF(0, 0, context.CurrentLevel.TileMap.Tiles.GetLength(0)  *64,context.CurrentLevel.TileMap.Tiles.GetLength(1) * 64));
         var shash = new SpatialHash(new Vector2(100 * 64, 100 * 64));
         var wallsLayer = new Layer(shash);
         _collisionComponent.Add("Walls", wallsLayer);
@@ -78,6 +78,7 @@ public class CollisionSystem() : EntityUpdateSystem(Aspect.All(typeof(ColliderCo
                     var trigger = _triggerMapper.Get(entity);
                     trigger.IsArmed = true;
                     trigger.ActivatingEntity = otherEntity;
+                    //otherTransform.Position += collisionInfo.PenetrationVector;
                     entityCollider.ClearCollisionInfo();
                     continue;
                 }

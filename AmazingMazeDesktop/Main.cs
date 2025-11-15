@@ -28,8 +28,9 @@ public class Main : Game
 
     private Camera2D _camera;
     private GameContext _gameContext;
-    private ECSWorld _ecsWorld;
+
     private ConfigsPackage _configs;
+    private World _worldLast;
 
     public Main()
     {
@@ -54,11 +55,11 @@ public class Main : Game
             LevelConfig = new LevelConfig()
             {
                 Seed = 1234,
-                Height = 30,
+                Height = 20,
                 Width = 20,
             }
         };
-        
+
         _camera = new Camera2D(GraphicsDevice.Viewport);
 
         base.Initialize();
@@ -77,11 +78,10 @@ public class Main : Game
         Assets.GreenPlaceholderTexture = new Texture2D(GraphicsDevice, 1, 1, false, SurfaceFormat.Color);
         Assets.GreenPlaceholderTexture.SetData([Color.Green]);
 
+        _gameContext = new GameContext(_configs, _camera, GraphicsDevice);
 
-        _gameContext = new GameContext(_configs);
-        _ecsWorld = new ECSWorld();
-        _ecsWorld.Initialize(_gameContext, _camera, GraphicsDevice);
-        Components.Add(_ecsWorld.World);
+        _worldLast = _gameContext.World.World;
+        Components.Add(_worldLast);
     }
 
     protected override void Update(GameTime gameTime)
@@ -92,7 +92,15 @@ public class Main : Game
 
         KeyboardExtended.Update();
         MouseExtended.Update();
-        _ecsWorld.Update(gameTime);
+        _gameContext.Update(gameTime);
+        if (_worldLast != _gameContext.World.World)
+        {
+            //Components.Remove(_gameContext.World.World);
+            Components.Remove(_worldLast);
+            _worldLast = _gameContext.World.World;
+            Components.Add(_gameContext.World.World);
+        }
+
 
         base.Update(gameTime);
     }
@@ -101,7 +109,7 @@ public class Main : Game
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
 
-        _ecsWorld.Draw(gameTime);
+        _gameContext.Draw(gameTime);
 
         _spriteBatch.Begin(transformMatrix: _camera.GetTransformation());
         // Draw maze background
@@ -130,7 +138,8 @@ public class Main : Game
                             Vector2.Zero, EngineSettings.CellSize, SpriteEffects.None, 1f);
                         break;
                     case >= 2:
-                        if (_gameContext.CurrentLevel.EntryRoomId == _gameContext.CurrentLevel.MazeStructure.Map[y, x] ||
+                        if (_gameContext.CurrentLevel.EntryRoomId ==
+                            _gameContext.CurrentLevel.MazeStructure.Map[y, x] ||
                             _gameContext.CurrentLevel.ExitRoomId == _gameContext.CurrentLevel.MazeStructure.Map[y, x])
                         {
                             _spriteBatch.Draw(Assets.GreenPlaceholderTexture,

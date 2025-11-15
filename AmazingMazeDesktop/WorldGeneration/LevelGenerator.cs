@@ -65,7 +65,8 @@ public class LevelGenerator()
             var spawnTile = room.Value.Cells.Shuffle(random).First();
             var spawnPoint = new SpawnPoint
             {
-                IsPlayerSpawn = room.Key == level.EntryRoomId,
+                IsPlayerSpawnFromLower = room.Key == level.EntryRoomId,
+                IsPlayerSpawnFromHigher = room.Key == level.ExitRoomId,
                 TileCoordinates = spawnTile
             };
             level.SpawnPoints.Add(spawnPoint);
@@ -82,7 +83,7 @@ public class LevelGenerator()
         level.Triggers.Add(new Trigger
         {
             TileCoordinates = entryTile,
-            TriggerType = TriggerType.OnEnter,
+            Type = TriggerType.OnEnter,
             Action = TriggerAction.LoadPreviousLevel
         });
 
@@ -98,7 +99,7 @@ public class LevelGenerator()
         level.Triggers.Add(new Trigger
         {
             TileCoordinates = exitTile,
-            TriggerType = TriggerType.OnEnter,
+            Type = TriggerType.OnEnter,
             Action = TriggerAction.LoadNextLevel
         });
 

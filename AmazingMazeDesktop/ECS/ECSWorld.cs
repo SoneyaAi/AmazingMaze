@@ -19,7 +19,7 @@ public class ECSWorld
 
     public void Initialize(GameContext context, Camera2D camera, GraphicsDevice graphicsDevice)
     {
-        _collisionSystem = new CollisionSystem();
+        _collisionSystem = new CollisionSystem(context);
         _entityFactory = new EntityFactory(_collisionSystem);
         _spawnSystem = new SpawnSystem(_entityFactory);
         _movementSystem = new MovementSystem();
@@ -39,11 +39,11 @@ public class ECSWorld
             .AddSystem(new RenderSystem(graphicsDevice, camera))
             .Build();
         _entityFactory.SetWorld(World);
-        
+
         // Spawns
         foreach (var spawner in context.CurrentLevel.SpawnPoints)
         {
-            if (spawner.IsPlayerSpawn)
+            if (spawner.IsPlayerSpawnFromLower)
             {
                 _entityFactory.BuildEntity(new PlayerBuilderArgs()
                 {
@@ -59,7 +59,19 @@ public class ECSWorld
                 TimeToSpawn = 20
             });
         }
-        
+
+        // Triggers
+        foreach (var trigger in context.CurrentLevel.Triggers)
+        {
+            _entityFactory.BuildEntity(new TriggerBuilderArgs()
+            {
+                Position = Conversions.CellToWorld(trigger.TileCoordinates),
+                Action = trigger.Action,
+                Type = trigger.Type,
+            });
+        }
+
+        // Walls
         for (int y = 0; y < context.CurrentLevel.MazeStructure.Map.GetLength(0); y++)
         {
             for (int x = 0; x < context.CurrentLevel.MazeStructure.Map.GetLength(1); x++)
@@ -77,6 +89,7 @@ public class ECSWorld
         }
     }
 
+    
     public void Update(GameTime gameTime)
     {
         World.Update(gameTime);

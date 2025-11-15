@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.ECS.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
@@ -26,6 +27,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
     private ComponentMapper<PathComponent> _pathMapper;
     private ComponentMapper<TagsComponent> _tagsMapper;
     private Vector2 _playerPosition;
+    private ComponentMapper<TriggerComponent> _triggerMapper;
     
     public override void Initialize(IComponentMapperService mapperService)
     {
@@ -37,7 +39,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
         _movementMapper = mapperService.GetMapper<MovementComponent>();
         _pathMapper = mapperService.GetMapper<PathComponent>();
         _tagsMapper = mapperService.GetMapper<TagsComponent>();
-        
+        _triggerMapper = mapperService.GetMapper<TriggerComponent>();
     }
 
     public override void Draw(GameTime gameTime)
@@ -113,8 +115,24 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
                 // Debug
                 if (_colliderMapper.TryGet(entity, out var collider))
                 {
-                    _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
-                        Color.Blue);
+                    if (_triggerMapper.TryGet(entity, out var trigger))
+                    {
+                        if (trigger.Action == TriggerAction.LoadNextLevel)
+                        {
+                            _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
+                                Color.White);
+                        }
+                        if (trigger.Action == TriggerAction.LoadPreviousLevel)
+                        {
+                            _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
+                                Color.Red);
+                        }
+                    }
+                    else
+                    {
+                        _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
+                            Color.Blue);
+                    }
                 }
 
                 if (_pathMapper.TryGet(entity, out var pathCompoennt) && pathCompoennt.Path.Count > 0)

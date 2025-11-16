@@ -137,18 +137,15 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
 
                 if (_pathMapper.TryGet(entity, out var pathCompoennt) && pathCompoennt.Path.Count > 0)
                 {
-                    //for(int i = 0; i < movement.Path.Count; i++)
-                    //{
                         var path = new Queue<Point>(pathCompoennt.Path);
                         try
                         {
                             while (path.Count > 0)
                             {
-                                
-                                //Debug.WriteLine($"Render peek: {path.Peek()}");
                                 var first = path.Dequeue();
                                 var next = path.Peek().ToVector2();
                                 _spriteBatch.DrawCircle(Conversions.CellToWorld(first),MovementSystem.WaypointRadius,20,Color.Blue,5f);
+                                
                                 _spriteBatch.DrawLine(Conversions.CellToWorld(first), next * 64 + new Vector2(32, 32),
                                     Color.Black, thickness:5);
                                 
@@ -157,7 +154,6 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
                         catch
                         {
                         }
-                    //}
                 }
                 
                 

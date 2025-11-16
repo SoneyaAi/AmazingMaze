@@ -25,23 +25,21 @@ public class PathfindingSystem(IPathfinderService pathingService, MazeStructure 
     public override void Process(GameTime gameTime, int entityId)
     {
         var pathComponent = _pathMapper.Get(entityId);
+        if (!pathComponent.RecalculateRequested)
+            return;
+        
         var transform = _transformMapper.Get(entityId);
         var movement = _movementMapper.Get(entityId);
         var targetCell = Conversions.WorldToCell(movement.Target);
         var startCell = Conversions.WorldToCell(transform.Position);
         var path = new Queue<Point>();
-        if (!pathComponent.RecalculateRequested)
-            return;
-
 
         var corridorsPath = pathingService.GetPath(startCell, targetCell);
         while (corridorsPath.Count > 0)
         {
             path.Enqueue(corridorsPath.Dequeue());
         }
-
         pathComponent.Path = path;
-
         pathComponent.RecalculateRequested = false;
     }
 }

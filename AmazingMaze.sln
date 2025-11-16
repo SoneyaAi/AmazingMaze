@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmazingMazeDesktop", "AmazingMazeDesktop\AmazingMazeDesktop.csproj", "{67A16A6A-74B5-4DA4-88EC-88CF500BE422}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Content", "Content\Content.csproj", "{8D2583AD-BC05-4E5F-9C73-8E1F997C7A66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{67A16A6A-74B5-4DA4-88EC-88CF500BE422}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67A16A6A-74B5-4DA4-88EC-88CF500BE422}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67A16A6A-74B5-4DA4-88EC-88CF500BE422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D2583AD-BC05-4E5F-9C73-8E1F997C7A66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D2583AD-BC05-4E5F-9C73-8E1F997C7A66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D2583AD-BC05-4E5F-9C73-8E1F997C7A66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D2583AD-BC05-4E5F-9C73-8E1F997C7A66}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

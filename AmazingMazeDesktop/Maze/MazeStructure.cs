@@ -137,28 +137,28 @@ public class MazeStructure
                 if (convertedMaze[top.Y, top.X] == 0)
                 {
                     convertedMaze[top.Y + 1, top.X] = roomId;
-                    _roomsDictionary[roomId].EntryCell = top - cell;
+                    _roomsDictionary[roomId].EntryCell = cell - top ;
                     break;
                 }
 
                 if (convertedMaze[down.Y, down.X] == 0)
                 {
                     convertedMaze[down.Y - 1, down.X] = roomId;
-                    _roomsDictionary[roomId].EntryCell = down - cell;
+                    _roomsDictionary[roomId].EntryCell = cell - down;
                     break;
                 }
 
                 if (convertedMaze[right.Y, right.X] == 0)
                 {
                     convertedMaze[right.Y, right.X - 1] = roomId;
-                    _roomsDictionary[roomId].EntryCell = right - cell;
+                    _roomsDictionary[roomId].EntryCell = cell - right;
                     break;
                 }
 
                 if (convertedMaze[left.Y, left.X] == 0)
                 {
                     convertedMaze[left.Y, left.X + 1] = roomId;
-                    _roomsDictionary[roomId].EntryCell = left - cell;
+                    _roomsDictionary[roomId].EntryCell = cell - left ;
                     break;
                 }
             }

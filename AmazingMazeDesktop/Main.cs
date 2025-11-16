@@ -55,8 +55,8 @@ public class Main : Game
             LevelConfig = new LevelConfig()
             {
                 Seed = 1234,
-                Height = 20,
-                Width = 20,
+                Height = 30,
+                Width = 30,
             }
         };
 

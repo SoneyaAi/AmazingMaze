@@ -29,7 +29,7 @@ public class ECSWorld
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
             .AddSystem(new TriggersSystem(context))
-            .AddSystem(new PathfindingSystem(context.CurrentLevel.MazeStructure))
+            .AddSystem(new PathfindingSystem(context.Services.PathfinderService, context.CurrentLevel.MazeStructure))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem())
@@ -56,7 +56,7 @@ public class ECSWorld
             _entityFactory.BuildEntity(new SpawnerBuilderArgs()
             {
                 Position = spawnerPos,
-                TimeToSpawn = 20
+                TimeToSpawn = 10
             });
         }
 

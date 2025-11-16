@@ -74,7 +74,6 @@ public class EntityFactory(CollisionSystem collisionSystem)
         entity.Attach(new ColliderComponent(new RectangleF(args.Position,
             new Vector2(32, 48)), entity.Id));
         entity.Attach(new PathComponent());
-        entity.Attach(new PathfindingComponent());
     }
 
     private void BuildSpawner(Entity entity, SpawnerBuilderArgs args)

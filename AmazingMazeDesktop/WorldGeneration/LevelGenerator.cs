@@ -52,8 +52,8 @@ public class LevelGenerator()
         }
 
         var ordered = roomPairs.OrderByDescending(tuple =>
-            Vector2.Distance(level.MazeStructure.Rooms[tuple.a].EntryPath[0].ToVector2(),
-                level.MazeStructure.Rooms[tuple.b].EntryPath[0].ToVector2())
+            Vector2.Distance(level.MazeStructure.Rooms[tuple.a].EntryCell.ToVector2(),
+                level.MazeStructure.Rooms[tuple.b].EntryCell.ToVector2())
         );
         var pair = ordered.First();
         level.EntryRoomId = pair.a;

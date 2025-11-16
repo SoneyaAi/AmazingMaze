@@ -11,6 +11,7 @@ namespace AmazingMazeDesktop;
 
 public class GameContext
 {
+    public GameServices Services { get; }
     public Dungeon Dungeon => _dungeon;
     public Level CurrentLevel { get; private set; }
     public ECSWorld World => _levelEcsWorldDictionary[CurrentLevel];
@@ -23,6 +24,7 @@ public class GameContext
 
     public GameContext(ConfigsPackage configs, Camera2D camera, GraphicsDevice graphicsDevice)
     {
+        Services = new GameServices(this);
         _configs = configs;
         _dungeon = new DungeonGenerator().Generate(_configs);
         CurrentLevel = _dungeon.Levels[_currentLevelIndex];

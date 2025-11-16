@@ -23,6 +23,7 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="AStarNavigator" Version="1.0.63" />
         <PackageReference Include="Gum.MonoGame" Version="2025.9.27.1" />
         <PackageReference Include="Labyrinthian" Version="1.4.0" />
         <PackageReference Include="Labyrinthian.Svg" Version="1.4.0" />

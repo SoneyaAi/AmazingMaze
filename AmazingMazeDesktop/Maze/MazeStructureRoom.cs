@@ -7,5 +7,5 @@ public class MazeStructureRoom
 {
     public int Id;
     public List<Point> Cells = new();
-    public Point[] EntryPath = new Point[2];
+    public Point EntryCell = new Point();
 }

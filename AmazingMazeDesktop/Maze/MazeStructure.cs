@@ -137,95 +137,33 @@ public class MazeStructure
                 if (convertedMaze[top.Y, top.X] == 0)
                 {
                     convertedMaze[top.Y + 1, top.X] = roomId;
-                    _roomsDictionary[roomId].EntryPath[0] = top;
-                    _roomsDictionary[roomId].EntryPath[1] = cell;
+                    _roomsDictionary[roomId].EntryCell = top - cell;
                     break;
                 }
 
                 if (convertedMaze[down.Y, down.X] == 0)
                 {
                     convertedMaze[down.Y - 1, down.X] = roomId;
-                    _roomsDictionary[roomId].EntryPath[0] = down;
-                    _roomsDictionary[roomId].EntryPath[1] = cell;
+                    _roomsDictionary[roomId].EntryCell = down - cell;
                     break;
                 }
 
                 if (convertedMaze[right.Y, right.X] == 0)
                 {
                     convertedMaze[right.Y, right.X - 1] = roomId;
-                    _roomsDictionary[roomId].EntryPath[0] = right;
-                    _roomsDictionary[roomId].EntryPath[1] = cell;
+                    _roomsDictionary[roomId].EntryCell = right - cell;
                     break;
                 }
 
                 if (convertedMaze[left.Y, left.X] == 0)
                 {
                     convertedMaze[left.Y, left.X + 1] = roomId;
-                    _roomsDictionary[roomId].EntryPath[0] = left;
-                    _roomsDictionary[roomId].EntryPath[1] = cell;
+                    _roomsDictionary[roomId].EntryCell = left - cell;
                     break;
                 }
             }
         }
 
         Map = convertedMaze;
-    }
-
-    public Queue<Point> GetPath(Point start, Point destination)
-    {
-        var startLabyrinthianCell = TranslateGlobalCellToLabyrinthian(start);
-        var destinationLabyrinthianCell = TranslateGlobalCellToLabyrinthian(destination);
-
-        Queue<Point> waypoints = [];
-
-        foreach (var waypoint in new UnderlayPathfinder(_underlayMaze.Maze, startLabyrinthianCell,
-                         destinationLabyrinthianCell).Path
-                     .Select(gridPoint => new Point(gridPoint.Column * 2 + 1, gridPoint.Row * 2 + 1)))
-        {
-            if (waypoints.Count > 0)
-            {
-                var last = waypoints.Last();
-                var midpoint = new Point(
-                    (last.X + waypoint.X) / 2,
-                    (last.Y + waypoint.Y) / 2
-                );
-
-                waypoints.Enqueue(midpoint);
-            }
-
-            waypoints.Enqueue(waypoint);
-        }
-
-        // Remove unwanted pre-start waypoints
-        while (waypoints.Contains(start))
-            waypoints.Dequeue();
-
-        // Add destination as last point if needed
-        if (!waypoints.LastOrDefault().Equals(destination))
-            waypoints.Enqueue(destination);
-
-        // Add destination itself
-        // if (!waypoints.LastOrDefault().Equals(destination))
-        // {
-        //     if (waypoints.Contains(destination))
-        //     {
-        //         while(waypoints.LastOrDefault() != destination)
-        //             waypoints.
-        //     }
-        //     else
-        //     {
-        //         waypoints.Enqueue(destination);
-        //     }
-        //     
-        // }
-
-        return waypoints;
-    }
-
-    private Point TranslateGlobalCellToLabyrinthian(Point global)
-    {
-        var x = global.X / 2;
-        var y = global.Y / 2;
-        return new Point(x, y);
     }
 }

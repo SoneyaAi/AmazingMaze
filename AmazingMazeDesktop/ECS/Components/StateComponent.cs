@@ -1,10 +1,13 @@
+using AmazingMazeDesktop.Interfaces;
+
 namespace AmazingMazeDesktop.Components;
 
 public class StateComponent
 {
-    public State Current;
+    public MoveState Current;
     public Facing Facing;
-    public State? Queued;     // żądany następny stan, gdy Lock aktywny
+    public MoveState? Queued;     // żądany następny stan, gdy Lock aktywny
     public bool LockUntilEnd;     // np. Attack/Hurt/Die nieprzerywalne
     public float TimeInState;     // do okien i cooldownów
+    public IEnemyState State;
 }

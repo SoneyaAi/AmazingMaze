@@ -32,17 +32,17 @@ public class StateSystem() : EntityUpdateSystem(Aspect.All(typeof(StateComponent
 
                 if (direction.X > 0)
                 {
-                    stateComponent.Current = State.Walk;
+                    stateComponent.Current = MoveState.Walk;
                     stateComponent.Facing = Facing.East;
                 }
                 else if (direction.X < 0)
                 {
-                    stateComponent.Current = State.Walk;
+                    stateComponent.Current = MoveState.Walk;
                     stateComponent.Facing = Facing.West;
                 }
                 else
                 {
-                    stateComponent.Current = State.Idle;
+                    stateComponent.Current = MoveState.Idle;
                     stateComponent.Facing = stateComponent.Facing;
                 }
             }
@@ -52,22 +52,22 @@ public class StateSystem() : EntityUpdateSystem(Aspect.All(typeof(StateComponent
                  var control = _playerControlComponentMapper.Get(entity);
                  if (control.WalkLeftPressed)
                  {
-                     stateComponent.Current = State.Walk;
+                     stateComponent.Current = MoveState.Walk;
                      stateComponent.Facing = Facing.West;
                  }
                  if (control.WalkRightPressed)
                  {
-                     stateComponent.Current = State.Walk;
+                     stateComponent.Current = MoveState.Walk;
                      stateComponent.Facing = Facing.East;
                  }
                  if (control.WalkUpPressed)
                  {
-                     stateComponent.Current = State.Walk;
+                     stateComponent.Current = MoveState.Walk;
                      stateComponent.Facing = Facing.North;
                  }
                  if (control.WalkDownPressed)
                  {
-                     stateComponent.Current = State.Walk;
+                     stateComponent.Current = MoveState.Walk;
                      stateComponent.Facing = Facing.South;
                  }
 

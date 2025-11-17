@@ -8,7 +8,7 @@ using MonoGame.Extended.Timers;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class SpawnSystem(EntityFactory factory) : EntityUpdateSystem(Aspect.All(typeof(SpawnerComponent)))
+public class SpawnSystem(GameContext context, EntityFactory factory) : EntityUpdateSystem(Aspect.All(typeof(SpawnerComponent)))
 {
     private ComponentMapper<SpawnerComponent> _spawnerMapper;
     private ComponentMapper<Transform2> _transformMapper;
@@ -30,7 +30,7 @@ public class SpawnSystem(EntityFactory factory) : EntityUpdateSystem(Aspect.All(
             if (timer.State != TimerState.Completed) 
                 continue;
             
-            factory.BuildEntity(new EnemyBuilderArgs()
+            factory.BuildEnemy(new EnemyBuilderArgs()
             {
                 Position = transform.Position,
                 Speed = 30

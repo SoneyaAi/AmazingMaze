@@ -31,7 +31,7 @@ public class ShootingSystem(EntityFactory factory) : EntityUpdateSystem(Aspect.A
             if (!shooter.ShootIntent) continue;
             if (shooter.Reloading.State != TimerState.Completed) continue;
             
-            factory.BuildEntity(new ProjectileBuilderArgs()
+            factory.BuildProjectile(new ProjectileBuilderArgs()
             {
                 Position = transform.Position,
                 Direction = Vector2.Normalize(Vector2.Subtract(shooter.TargetPosition, transform.Position)),

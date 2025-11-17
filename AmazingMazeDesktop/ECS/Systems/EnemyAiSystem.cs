@@ -7,7 +7,7 @@ using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class EnemyAiSystem() : EntityUpdateSystem(Aspect.One(typeof(TagsComponent)))
+public class EnemyAiSystem(GameContext context) : EntityUpdateSystem(Aspect.One(typeof(TagsComponent)))
 {
     private ComponentMapper<Transform2> _transform2Mapper;
     private ComponentMapper<MovementComponent> _movementComponentMapper;
@@ -22,12 +22,10 @@ public class EnemyAiSystem() : EntityUpdateSystem(Aspect.One(typeof(TagsComponen
 
     public override void Update(GameTime gameTime)
     {
-        var player = ActiveEntities.First(e => _tagsMapper.Get(e).TagsList.Contains(Tags.Player));
-
         foreach (var entity in ActiveEntities.Where( e => _tagsMapper.Get(e).HasTag(Tags.Enemy) ))
         {
             var movement = _movementComponentMapper.Get(entity);
-            movement.Target =  _transform2Mapper.Get(player).Position;
+            movement.Target = context.Services.PlayerTracker.GetPlayerPositionWorld();
         }
     }
 }

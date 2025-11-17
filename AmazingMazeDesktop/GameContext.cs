@@ -13,6 +13,7 @@ public class GameContext
 {
     public GameServices Services { get; }
     public Dungeon Dungeon => _dungeon;
+    public int PlayerEntityId;
     public Level CurrentLevel { get; private set; }
     public ECSWorld World => _levelEcsWorldDictionary[CurrentLevel];
     public int _currentLevelIndex = 0;

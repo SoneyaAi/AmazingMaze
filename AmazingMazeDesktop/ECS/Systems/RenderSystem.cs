@@ -78,7 +78,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
                     {
                         var state = _stateMapper.Get(entity);
                         string animName = "";
-                        if (state.Current == State.Walk)
+                        if (state.Current == MoveState.Walk)
                             animName = "walk";
                         else
                             animName = "spellcast";
@@ -101,7 +101,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
                         
                         
                         
-                        if (state.Current == State.Walk && aspr.CurrentAnimation != animName)
+                        if (state.Current == MoveState.Walk && aspr.CurrentAnimation != animName)
                             aspr.SetAnimation(animName);
 
                         aspr.Update(gameTime);

@@ -6,7 +6,7 @@ using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 
-namespace AmazingMazeDesktop.Systems;
+namespace AmazingMazeDesktop.ECS.Systems;
 
 public class PathfindingSystem(IPathfinderService pathingService, MazeStructure mazeStructure)
     : EntityProcessingSystem(Aspect.All(typeof(PathComponent)))

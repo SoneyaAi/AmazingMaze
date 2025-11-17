@@ -1,6 +1,6 @@
 namespace AmazingMazeDesktop;
 
-public enum State
+public enum MoveState
 {
     Idle,
     Walk,
@@ -8,6 +8,17 @@ public enum State
     Hurt,
     Die
 }
+
+public enum EnemyStateId
+{
+    Idle,
+    Patrol,
+    Chase,
+    Search,
+    Attack,
+    Dead
+}
+
 
 public enum Facing
 {

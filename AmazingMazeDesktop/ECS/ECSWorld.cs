@@ -1,4 +1,5 @@
 using System.Linq;
+using AmazingMazeDesktop.ECS.Systems;
 using AmazingMazeDesktop.Factory;
 using AmazingMazeDesktop.Systems;
 using AmazingMazeDesktop.WorldModel;
@@ -20,8 +21,8 @@ public class ECSWorld
     public void Initialize(GameContext context, Camera2D camera, GraphicsDevice graphicsDevice)
     {
         _collisionSystem = new CollisionSystem(context);
-        _entityFactory = new EntityFactory(_collisionSystem);
-        _spawnSystem = new SpawnSystem(_entityFactory);
+        _entityFactory = new EntityFactory(context, _collisionSystem);
+        _spawnSystem = new SpawnSystem(context, _entityFactory);
         _movementSystem = new MovementSystem();
         _movementSystem.MazeStructure = context.CurrentLevel.MazeStructure;
 
@@ -32,7 +33,7 @@ public class ECSWorld
             .AddSystem(new PathfindingSystem(context.Services.PathfinderService, context.CurrentLevel.MazeStructure))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
-            .AddSystem(new EnemyAiSystem())
+            .AddSystem(new EnemyAiSystem(context))
             .AddSystem(_collisionSystem)
             .AddSystem(new StateSystem())
             .AddSystem(new CameraSystem(camera))
@@ -45,7 +46,7 @@ public class ECSWorld
         {
             if (spawner.IsPlayerSpawnFromLower)
             {
-                _entityFactory.BuildEntity(new PlayerBuilderArgs()
+                _entityFactory.BuildPlayer(new PlayerBuilderArgs()
                 {
                     Position = Conversions.CellToWorld(spawner.TileCoordinates)
                 });
@@ -53,7 +54,7 @@ public class ECSWorld
             }
 
             var spawnerPos = Conversions.CellToWorld(spawner.TileCoordinates);
-            _entityFactory.BuildEntity(new SpawnerBuilderArgs()
+            _entityFactory.BuildSpawner(new SpawnerBuilderArgs()
             {
                 Position = spawnerPos,
                 TimeToSpawn = 10
@@ -63,7 +64,7 @@ public class ECSWorld
         // Triggers
         foreach (var trigger in context.CurrentLevel.Triggers)
         {
-            _entityFactory.BuildEntity(new TriggerBuilderArgs()
+            _entityFactory.BuildTrigger(new TriggerBuilderArgs()
             {
                 Position = Conversions.CellToWorld(trigger.TileCoordinates),
                 Action = trigger.Action,
@@ -79,7 +80,7 @@ public class ECSWorld
                 if (context.CurrentLevel.MazeStructure.Map[y, x] != 1)
                     continue;
 
-                var wallEntity = _entityFactory.BuildEntity(new WallBuilderArgs()
+                var wallEntity = _entityFactory.BuildWall(new WallBuilderArgs()
                 {
                     Position = new Vector2(x * EngineSettings.CellSize + EngineSettings.CellSize * 0.5f,
                         y * EngineSettings.CellSize + EngineSettings.CellSize * 0.5f),
@@ -88,7 +89,6 @@ public class ECSWorld
             }
         }
     }
-
     
     public void Update(GameTime gameTime)
     {

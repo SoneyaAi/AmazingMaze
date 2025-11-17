@@ -5,6 +5,7 @@ using AmazingMazeDesktop.Systems;
 using AmazingMazeDesktop.WorldModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 using MonoGame.Extended.Collections;
 using MonoGame.Extended.ECS;
 
@@ -18,7 +19,7 @@ public class ECSWorld
     private SpawnSystem _spawnSystem;
     private EntityFactory _entityFactory;
 
-    public void Initialize(GameContext context, Camera2D camera, GraphicsDevice graphicsDevice)
+    public void Initialize(GameContext context, OrthographicCamera camera, GraphicsDevice graphicsDevice)
     {
         _collisionSystem = new CollisionSystem(context);
         _entityFactory = new EntityFactory(context, _collisionSystem);
@@ -30,13 +31,13 @@ public class ECSWorld
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
             .AddSystem(new TriggersSystem(context))
-            .AddSystem(new PathfindingSystem(context.Services.PathfinderService, context.CurrentLevel.MazeStructure))
+            .AddSystem(new PathfindingSystem(context.Services.PathfinderService))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem(context))
             .AddSystem(_collisionSystem)
             .AddSystem(new StateSystem())
-            .AddSystem(new CameraSystem(camera))
+            .AddSystem(new CameraSystem(camera, context.Services.PlayerTracker))
             .AddSystem(new RenderSystem(graphicsDevice, camera))
             .Build();
         _entityFactory.SetWorld(World);

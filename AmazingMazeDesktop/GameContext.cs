@@ -6,6 +6,7 @@ using AmazingMazeDesktop.WorldGeneration.Configs;
 using AmazingMazeDesktop.WorldModel;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using MonoGame.Extended;
 
 namespace AmazingMazeDesktop;
 
@@ -19,11 +20,11 @@ public class GameContext
     public int _currentLevelIndex = 0;
     private Dungeon _dungeon;
     private ConfigsPackage _configs;
-    private Camera2D _camera;
+    private OrthographicCamera _camera;
     private GraphicsDevice _graphicsDevice;
     Dictionary<Level, ECSWorld> _levelEcsWorldDictionary = new Dictionary<Level, ECSWorld>();
 
-    public GameContext(ConfigsPackage configs, Camera2D camera, GraphicsDevice graphicsDevice)
+    public GameContext(ConfigsPackage configs, OrthographicCamera camera, GraphicsDevice graphicsDevice)
     {
         Services = new GameServices(this);
         _configs = configs;

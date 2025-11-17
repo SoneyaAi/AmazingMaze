@@ -8,7 +8,7 @@ using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.ECS.Systems;
 
-public class PathfindingSystem(IPathfinderService pathingService, MazeStructure mazeStructure)
+public class PathfindingSystem(IPathfinderService pathingService)
     : EntityProcessingSystem(Aspect.All(typeof(PathComponent)))
 {
     private ComponentMapper<PathComponent> _pathMapper;
@@ -27,7 +27,7 @@ public class PathfindingSystem(IPathfinderService pathingService, MazeStructure 
         var pathComponent = _pathMapper.Get(entityId);
         if (!pathComponent.RecalculateRequested)
             return;
-        
+
         var transform = _transformMapper.Get(entityId);
         var movement = _movementMapper.Get(entityId);
         var targetCell = Conversions.WorldToCell(movement.Target);
@@ -39,6 +39,7 @@ public class PathfindingSystem(IPathfinderService pathingService, MazeStructure 
         {
             path.Enqueue(corridorsPath.Dequeue());
         }
+
         pathComponent.Path = path;
         pathComponent.RecalculateRequested = false;
     }

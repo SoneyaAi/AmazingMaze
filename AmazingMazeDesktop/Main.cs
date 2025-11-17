@@ -17,6 +17,8 @@ using MonoGame.Extended.Collections;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.Graphics;
 using MonoGame.Extended.Input;
+using MonoGame.Extended.ViewportAdapters;
+
 
 namespace AmazingMazeDesktop;
 
@@ -26,7 +28,8 @@ public class Main : Game
     private SpriteBatch _spriteBatch;
     private AnimationController _spellcastAnimationController;
 
-    private Camera2D _camera;
+    private OrthographicCamera _camera;
+    //private Camera2D _camera;
     private GameContext _gameContext;
 
     private ConfigsPackage _configs;
@@ -59,8 +62,8 @@ public class Main : Game
                 Width = 30,
             }
         };
-
-        _camera = new Camera2D(GraphicsDevice.Viewport);
+   
+        _camera = new OrthographicCamera(GraphicsDevice);
 
         base.Initialize();
     }
@@ -111,7 +114,7 @@ public class Main : Game
 
         _gameContext.Draw(gameTime);
 
-        _spriteBatch.Begin(transformMatrix: _camera.GetTransformation());
+        _spriteBatch.Begin(transformMatrix: _camera.GetViewMatrix());
         // Draw maze background
         // for (var y = 0; y < _maze.MazeSchema.GetLength(0); y++)
         // {

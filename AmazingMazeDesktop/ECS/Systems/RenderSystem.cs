@@ -14,7 +14,7 @@ using RenderingLibrary;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
+public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera camera)
     : EntityDrawSystem(Aspect.One(typeof(Texture2D), typeof(AnimatorComponent), typeof(ColliderComponent), typeof(MovementComponent)))
 {
     private SpriteBatch _spriteBatch = new(graphicsDevice);
@@ -44,7 +44,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, Camera2D camera)
 
     public override void Draw(GameTime gameTime)
     {
-        _spriteBatch.Begin(transformMatrix: camera.GetTransformation());
+        _spriteBatch.Begin(transformMatrix: camera.GetViewMatrix());
         foreach (var entity in ActiveEntities)
         {
             if (_tagsMapper.TryGet(entity, out var tags))

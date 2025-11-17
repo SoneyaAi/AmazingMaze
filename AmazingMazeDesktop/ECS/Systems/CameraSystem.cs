@@ -1,13 +1,15 @@
 using System.Linq;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.Interfaces;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
+using MonoGame.Extended.Input;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class CameraSystem(Camera2D camera) : EntityUpdateSystem(Aspect.All(typeof(PlayerControlComponent)))
+public class CameraSystem(OrthographicCamera camera, IPlayerTracker playerTracker) : EntityUpdateSystem(Aspect.All(typeof(PlayerControlComponent)))
 {
     private ComponentMapper<Transform2> _transformMapper;
     
@@ -18,11 +20,12 @@ public class CameraSystem(Camera2D camera) : EntityUpdateSystem(Aspect.All(typeo
 
     public override void Update(GameTime gameTime)
     {
-        if (camera.MovementMode == CameraMovementMode.TrackPlayer)
-        {
-            var player = _transformMapper.Get(ActiveEntities.FirstOrDefault());
-            camera.MoveToPosition(player.Position.X, player.Position.Y);
-        }
-        camera.Update();
+        int scrollDelta = MouseExtended.GetState().DeltaScrollWheelValue;
+         if (scrollDelta > 0)
+             camera.ZoomIn(0.04f); 
+         else if (scrollDelta < 0)
+             camera.ZoomOut(0.04f);
+        camera.LookAt(playerTracker.GetPlayerPositionWorld());
+
     }
 }

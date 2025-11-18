@@ -26,6 +26,9 @@ public class SpawnSystem(GameContext context, EntityFactory factory) : EntityUpd
             var transform = _transformMapper.Get(entity);
             var spawner = _spawnerMapper.Get(entity);
             var timer = spawner.CountdownTimer;
+            if(spawner.Locked)
+                continue;
+            
             timer.Update(gameTime);
             if (timer.State != TimerState.Completed) 
                 continue;
@@ -35,6 +38,8 @@ public class SpawnSystem(GameContext context, EntityFactory factory) : EntityUpd
                 Position = transform.Position,
                 Speed = 30
             });
+
+            spawner.Locked = true;
             
             timer.Restart();
         }

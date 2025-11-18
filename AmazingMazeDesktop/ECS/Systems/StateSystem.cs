@@ -1,12 +1,13 @@
 using System.Diagnostics;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.ECS.StateContext;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class StateSystem() : EntityUpdateSystem(Aspect.All(typeof(StateComponent)))
+public class StateSystem(GameServices services) : EntityUpdateSystem(Aspect.All(typeof(StateComponent)))
 {
     private ComponentMapper<StateComponent> _stateComponentMapper;
     private ComponentMapper<MovementComponent> _movementComponentMapper;
@@ -25,6 +26,24 @@ public class StateSystem() : EntityUpdateSystem(Aspect.All(typeof(StateComponent
         {
             var stateComponent = _stateComponentMapper.Get(entity);
 
+            if (stateComponent.CurrentStateId == stateComponent.NextStateId)
+            {
+                if(stateComponent.CurrentState == null)
+                    stateComponent.CurrentState = stateComponent.States[stateComponent.CurrentStateId];
+                stateComponent.CurrentState.Update(GetEntity(entity), gameTime, new EnemyStateContext()
+                {
+                    PlayerPosition = services.PlayerTracker.GetPlayerPositionWorld()
+                } );
+            }
+
+            if (stateComponent.CurrentStateId != stateComponent.NextStateId)
+            {
+                stateComponent.CurrentState.Exit(GetEntity(entity));
+                stateComponent.CurrentStateId = stateComponent.NextStateId;
+                stateComponent.CurrentState = stateComponent.States[stateComponent.CurrentStateId];
+                stateComponent.CurrentState.Enter(GetEntity(entity));
+            }
+            
             if (GetEntity(entity).Has<MovementComponent>())
             {
                 var movementComponent = _movementComponentMapper.Get(entity);

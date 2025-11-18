@@ -12,4 +12,5 @@ public class SpawnerComponent(int spawnTime)
     
     public SpawnerType Type = SpawnerType.Player;
     public CountdownTimer CountdownTimer = new CountdownTimer(spawnTime);
+    public bool Locked = false;
 }

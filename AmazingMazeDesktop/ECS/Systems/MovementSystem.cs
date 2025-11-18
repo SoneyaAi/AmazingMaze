@@ -33,9 +33,9 @@ public class MovementSystem() : EntityProcessingSystem(Aspect.All(typeof(Movemen
         var transform = _transformMapper.Get(entityId);
         var movement = _movementMapper.Get(entityId);
         var position = transform.Position;
-
         if (movement.Mode == MovementComponent.MovementMode.FollowTarget)
         {
+ 
             var pathComponent = _pathMapper.Get(entityId);
             if (Conversions.WorldToCell(movement.Target) == Conversions.WorldToCell(position)) // Same cell as target
             {
@@ -57,6 +57,12 @@ public class MovementSystem() : EntityProcessingSystem(Aspect.All(typeof(Movemen
                 return;
             }
 
+            if (_stateMapper.TryGet(entityId, out var state))
+            {
+                if (state.CurrentStateId != EnemyStateId.Chase)
+                    return;
+            }
+            
             if (Vector2.Distance(Conversions.CellToWorld(pathComponent.Path.Peek()), position) <
                 WaypointRadius) // Waypoint reached
             {

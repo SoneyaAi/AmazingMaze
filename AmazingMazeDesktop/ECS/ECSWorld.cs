@@ -36,7 +36,7 @@ public class ECSWorld
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem(context))
             .AddSystem(_collisionSystem)
-            .AddSystem(new StateSystem())
+            .AddSystem(new StateSystem(context.Services))
             .AddSystem(new CameraSystem(camera, context.Services.PlayerTracker))
             .AddSystem(new RenderSystem(graphicsDevice, camera))
             .Build();

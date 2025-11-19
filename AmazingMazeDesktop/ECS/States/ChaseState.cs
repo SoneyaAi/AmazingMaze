@@ -31,6 +31,7 @@ public class ChaseState : IEnemyState
         }
 
         
+        
         // // jeśli blisko – atak
         // if (dist <= enemy.AttackRange)
         // {

@@ -113,7 +113,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                 
 
                 // Debug
-                if (_colliderMapper.TryGet(entity, out var collider))
+                if (DebugSettings.ShowColliders && _colliderMapper.TryGet(entity, out var collider))
                 {
                     if (_triggerMapper.TryGet(entity, out var trigger))
                     {

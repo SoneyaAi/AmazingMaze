@@ -54,8 +54,8 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                     _playerPosition = _transformMapper.Get(entity).Position;
                 }
             }
-            
-            
+
+
             if (_transformMapper.TryGet(entity, out var transform))
             {
                 if (_texture2DMapper.TryGet(entity, out var texture2D))
@@ -82,7 +82,7 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                             animName = "walk";
                         else
                             animName = "spellcast";
-                        
+
                         switch (state.Facing)
                         {
                             case Facing.North:
@@ -98,9 +98,9 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                                 animName += "_w";
                                 break;
                         }
-                        
-                        
-                        
+
+
+
                         if (state.Current == MoveState.Walk && aspr.CurrentAnimation != animName)
                             aspr.SetAnimation(animName);
 
@@ -108,35 +108,38 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                         _spriteBatch.Draw(aspr, transform);
                     }
                 }
-                
-    
-                
+
+
+
 
                 // Debug
-                if (DebugSettings.ShowColliders && _colliderMapper.TryGet(entity, out var collider))
+                if (DebugSettings.EnableDebug)
                 {
-                    if (_triggerMapper.TryGet(entity, out var trigger))
+                    if (DebugSettings.ShowColliders && _colliderMapper.TryGet(entity, out var collider))
                     {
-                        if (trigger.Action == TriggerAction.LoadNextLevel)
+                        if (_triggerMapper.TryGet(entity, out var trigger))
                         {
-                            _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
-                                Color.White);
-                        }
-                        if (trigger.Action == TriggerAction.LoadPreviousLevel)
-                        {
-                            _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
-                                Color.Red);
-                        }
-                    }
-                    else
-                    {
-                        _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
-                            Color.Blue);
-                    }
-                }
+                            if (trigger.Action == TriggerAction.LoadNextLevel)
+                            {
+                                _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
+                                    Color.White);
+                            }
 
-                if (_pathMapper.TryGet(entity, out var pathCompoennt) && pathCompoennt.Path.Count > 0)
-                {
+                            if (trigger.Action == TriggerAction.LoadPreviousLevel)
+                            {
+                                _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
+                                    Color.Red);
+                            }
+                        }
+                        else
+                        {
+                            _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
+                                Color.Blue);
+                        }
+                    }
+
+                    if (DebugSettings.ShowPaths && _pathMapper.TryGet(entity, out var pathCompoennt) && pathCompoennt.Path.Count > 0)
+                    {
                         var path = new Queue<Point>(pathCompoennt.Path);
                         try
                         {
@@ -144,20 +147,22 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                             {
                                 var first = path.Dequeue();
                                 var next = path.Peek().ToVector2();
-                                _spriteBatch.DrawCircle(Conversions.CellToWorld(first),MovementSystem.WaypointRadius,20,Color.Blue,5f);
-                                
+                                _spriteBatch.DrawCircle(Conversions.CellToWorld(first), MovementSystem.WaypointRadius,
+                                    20, Color.Blue, 5f);
+
                                 _spriteBatch.DrawLine(Conversions.CellToWorld(first), next * 64 + new Vector2(32, 32),
-                                    Color.Black, thickness:5);
-                                
+                                    Color.Black, thickness: 5);
+
                             }
                         }
                         catch
                         {
                         }
+                    }
+
+
+
                 }
-                
-                
-                
             }
         }
 

@@ -39,6 +39,7 @@ public class ECSWorld
             .AddSystem(new StateSystem(context.Services))
             .AddSystem(new CameraSystem(camera, context.Services.PlayerTracker))
             .AddSystem(new RenderSystem(graphicsDevice, camera))
+            .AddSystem(new DebugRenderSystem(graphicsDevice, camera))
             .Build();
         _entityFactory.SetWorld(World);
 

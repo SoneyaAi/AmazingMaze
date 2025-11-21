@@ -15,31 +15,24 @@ using RenderingLibrary;
 namespace AmazingMazeDesktop.Systems;
 
 public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera camera)
-    : EntityDrawSystem(Aspect.One(typeof(Texture2D), typeof(AnimatorComponent), typeof(ColliderComponent), typeof(MovementComponent)))
+    : EntityDrawSystem(Aspect.One(typeof(Texture2D), typeof(AnimatorComponent), typeof(ColliderComponent),
+        typeof(MovementComponent)))
 {
     private SpriteBatch _spriteBatch = new(graphicsDevice);
     private ComponentMapper<Transform2> _transformMapper;
     private ComponentMapper<Texture2D> _texture2DMapper;
     private ComponentMapper<AnimatorComponent> _animatorMapper;
-    private ComponentMapper<ColliderComponent> _colliderMapper;
     private ComponentMapper<StateComponent> _stateMapper;
-    private ComponentMapper<MovementComponent> _movementMapper;
-    private ComponentMapper<PathComponent> _pathMapper;
     private ComponentMapper<TagsComponent> _tagsMapper;
     private Vector2 _playerPosition;
-    private ComponentMapper<TriggerComponent> _triggerMapper;
-    
+
     public override void Initialize(IComponentMapperService mapperService)
     {
         _transformMapper = mapperService.GetMapper<Transform2>();
         _texture2DMapper = mapperService.GetMapper<Texture2D>();
-        _colliderMapper = mapperService.GetMapper<ColliderComponent>();
         _animatorMapper = mapperService.GetMapper<AnimatorComponent>();
         _stateMapper = mapperService.GetMapper<StateComponent>();
-        _movementMapper = mapperService.GetMapper<MovementComponent>();
-        _pathMapper = mapperService.GetMapper<PathComponent>();
         _tagsMapper = mapperService.GetMapper<TagsComponent>();
-        _triggerMapper = mapperService.GetMapper<TriggerComponent>();
     }
 
     public override void Draw(GameTime gameTime)
@@ -54,7 +47,6 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                     _playerPosition = _transformMapper.Get(entity).Position;
                 }
             }
-
 
             if (_transformMapper.TryGet(entity, out var transform))
             {
@@ -100,7 +92,6 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                         }
 
 
-
                         if (state.Current == MoveState.Walk && aspr.CurrentAnimation != animName)
                             aspr.SetAnimation(animName);
 
@@ -108,100 +99,34 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
                         _spriteBatch.Draw(aspr, transform);
                     }
                 }
-
-
-
-
-                // Debug
-                if (DebugSettings.EnableDebug)
-                {
-                    if (DebugSettings.ShowColliders && _colliderMapper.TryGet(entity, out var collider))
-                    {
-                        if (_triggerMapper.TryGet(entity, out var trigger))
-                        {
-                            if (trigger.Action == TriggerAction.LoadNextLevel)
-                            {
-                                _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
-                                    Color.White);
-                            }
-
-                            if (trigger.Action == TriggerAction.LoadPreviousLevel)
-                            {
-                                _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
-                                    Color.Red);
-                            }
-                        }
-                        else
-                        {
-                            _spriteBatch.DrawRectangle((RectangleF)collider.Bounds,
-                                Color.Blue);
-                        }
-                    }
-
-                    if (DebugSettings.ShowPaths && _pathMapper.TryGet(entity, out var pathCompoennt) && pathCompoennt.Path.Count > 0)
-                    {
-                        var path = new Queue<Point>(pathCompoennt.Path);
-                        try
-                        {
-                            while (path.Count > 0)
-                            {
-                                var first = path.Dequeue();
-                                var next = path.Peek().ToVector2();
-                                _spriteBatch.DrawCircle(Conversions.CellToWorld(first), MovementSystem.WaypointRadius,
-                                    20, Color.Blue, 5f);
-
-                                _spriteBatch.DrawLine(Conversions.CellToWorld(first), next * 64 + new Vector2(32, 32),
-                                    Color.Black, thickness: 5);
-
-                            }
-                        }
-                        catch
-                        {
-                        }
-                    }
-
-
-
-                }
             }
         }
 
         _spriteBatch.End();
-        
-        // FOW
-        // var vp = graphicsDevice.Viewport;
-        // var screenRect = new Rectangle(0, 0, vp.Width, vp.Height);
-        //
-        // Vector2 playerScreenPos = camera.WorldSpaceToScreen(_playerPosition);
-        //
-        // Vector2 playerPosUV = new Vector2(
-        //     playerScreenPos.X / screenRect.Width,
-        //     playerScreenPos.Y / screenRect.Height);
-        //
-        //
-        // Assets.FogOfWarEffect.Parameters["FogColor"].SetValue(new Vector4(0f, 0f, 0f, 1f));
-        // Assets.FogOfWarEffect.Parameters["PlayerPosPixels"].SetValue(playerScreenPos);
-        // Assets.FogOfWarEffect.Parameters["Radius"].SetValue(128);
-        // Assets.FogOfWarEffect.Parameters["Softness"].SetValue(128);
-        // Assets.FogOfWarEffect.Parameters["TextureWidth"].SetValue(vp.Width);
-        // Assets.FogOfWarEffect.Parameters["TextureHeight"].SetValue(vp.Height);
-        // Assets.FogOfWarEffect.Parameters["Zoom"].SetValue(camera.Zoom);
-        // _spriteBatch.Begin(
-        //     
-        //     SpriteSortMode.Immediate,
-        //     BlendState.AlphaBlend,
-        //     SamplerState.PointClamp,
-        //     DepthStencilState.None,
-        //     RasterizerState.CullNone,
-        //     effect: Assets.FogOfWarEffect
-        // );
 
-        //Debug.WriteLine($"fow: {_playerPosition}");
-        // rysujemy po prostu biały prostokąt na cały ekran
-        // _spriteBatch.Draw(Assets.WhitePlaceholderTexture, screenRect, Color.White);
-        // _spriteBatch.End();
-        
+        // FOW
+        var vp = graphicsDevice.Viewport;
+        var screenRect = new Rectangle(0, 0, vp.Width, vp.Height);
+
+        Vector2 playerScreenPos = camera.WorldToScreen(_playerPosition);
+
+        Assets.FogOfWarEffect.Parameters["FogColor"].SetValue(new Vector4(0f, 0f, 0f, 1f));
+        Assets.FogOfWarEffect.Parameters["PlayerPosPixels"].SetValue(playerScreenPos);
+        Assets.FogOfWarEffect.Parameters["Radius"].SetValue(128);
+        Assets.FogOfWarEffect.Parameters["Softness"].SetValue(128);
+        Assets.FogOfWarEffect.Parameters["TextureWidth"].SetValue(vp.Width);
+        Assets.FogOfWarEffect.Parameters["TextureHeight"].SetValue(vp.Height);
+        Assets.FogOfWarEffect.Parameters["Zoom"].SetValue(camera.Zoom);
+        _spriteBatch.Begin(
+            SpriteSortMode.Immediate,
+            BlendState.AlphaBlend,
+            SamplerState.PointClamp,
+            DepthStencilState.None,
+            RasterizerState.CullNone,
+            effect: Assets.FogOfWarEffect
+        );
+
+        _spriteBatch.Draw(Assets.WhitePlaceholderTexture, screenRect, Color.White);
+        _spriteBatch.End();
     }
-    
-    
 }

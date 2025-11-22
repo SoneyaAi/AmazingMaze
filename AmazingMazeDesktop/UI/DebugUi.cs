@@ -43,8 +43,8 @@ public class DebugUi(Game game)
         control1.IsChecked = DebugSettings.ShowPaths;
 
         var control2 = _ui.Root.GetFrameworkElementByName<CheckBox>("WaypointsCheckbox");
-        control2.Click += (sender, args) => { DebugSettings.ShowPaths = (bool)control2.IsChecked; };
-        control2.IsChecked = DebugSettings.ShowWaypoint;
+        control2.Click += (sender, args) => { DebugSettings.HideFoW = (bool)control2.IsChecked; };
+        control2.IsChecked = DebugSettings.HideFoW;
 
         var control3 = _ui.Root.GetFrameworkElementByName<CheckBox>("EnableDebugCheckbox");
         control3.Click += (sender, args) => { DebugSettings.EnableDebug = (bool)control3.IsChecked; };

@@ -105,28 +105,31 @@ public class RenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera came
         _spriteBatch.End();
 
         // FOW
-        var vp = graphicsDevice.Viewport;
-        var screenRect = new Rectangle(0, 0, vp.Width, vp.Height);
+        if (!DebugSettings.HideFoW)
+        {
+            var vp = graphicsDevice.Viewport;
+            var screenRect = new Rectangle(0, 0, vp.Width, vp.Height);
 
-        Vector2 playerScreenPos = camera.WorldToScreen(_playerPosition);
+            Vector2 playerScreenPos = camera.WorldToScreen(_playerPosition);
 
-        Assets.FogOfWarEffect.Parameters["FogColor"].SetValue(new Vector4(0f, 0f, 0f, 1f));
-        Assets.FogOfWarEffect.Parameters["PlayerPosPixels"].SetValue(playerScreenPos);
-        Assets.FogOfWarEffect.Parameters["Radius"].SetValue(128);
-        Assets.FogOfWarEffect.Parameters["Softness"].SetValue(128);
-        Assets.FogOfWarEffect.Parameters["TextureWidth"].SetValue(vp.Width);
-        Assets.FogOfWarEffect.Parameters["TextureHeight"].SetValue(vp.Height);
-        Assets.FogOfWarEffect.Parameters["Zoom"].SetValue(camera.Zoom);
-        _spriteBatch.Begin(
-            SpriteSortMode.Immediate,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp,
-            DepthStencilState.None,
-            RasterizerState.CullNone,
-            effect: Assets.FogOfWarEffect
-        );
+            Assets.FogOfWarEffect.Parameters["FogColor"].SetValue(new Vector4(0f, 0f, 0f, 1f));
+            Assets.FogOfWarEffect.Parameters["PlayerPosPixels"].SetValue(playerScreenPos);
+            Assets.FogOfWarEffect.Parameters["Radius"].SetValue(128);
+            Assets.FogOfWarEffect.Parameters["Softness"].SetValue(128);
+            Assets.FogOfWarEffect.Parameters["TextureWidth"].SetValue(vp.Width);
+            Assets.FogOfWarEffect.Parameters["TextureHeight"].SetValue(vp.Height);
+            Assets.FogOfWarEffect.Parameters["Zoom"].SetValue(camera.Zoom);
+            _spriteBatch.Begin(
+                SpriteSortMode.Immediate,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                DepthStencilState.None,
+                RasterizerState.CullNone,
+                effect: Assets.FogOfWarEffect
+            );
 
-        _spriteBatch.Draw(Assets.WhitePlaceholderTexture, screenRect, Color.White);
-        _spriteBatch.End();
+            _spriteBatch.Draw(Assets.WhitePlaceholderTexture, screenRect, Color.White);
+            _spriteBatch.End();
+        }
     }
 }

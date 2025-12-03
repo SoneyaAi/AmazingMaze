@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.Interfaces;
 using AmazingMazeDesktop.Systems;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -10,7 +11,7 @@ using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.ECS.Systems;
 
-public class DebugRenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera camera)
+public class DebugRenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera camera, ICoordsTranslationService  coordsService)
     : EntityDrawSystem(Aspect.One(typeof(Texture2D), typeof(AnimatorComponent), typeof(ColliderComponent),
         typeof(MovementComponent)))
 {
@@ -53,11 +54,11 @@ public class DebugRenderSystem(GraphicsDevice graphicsDevice, OrthographicCamera
                     var end = path[i + 1];
 
                     // Waypoint
-                    _spriteBatch.DrawCircle(Conversions.CellToWorld(start), MovementSystem.WaypointRadius,
+                    _spriteBatch.DrawCircle(coordsService.CellToWorld(start), MovementSystem.WaypointRadius,
                         20, Color.Blue, 5f);
 
                     // Path
-                    _spriteBatch.DrawLine(Conversions.CellToWorld(start),
+                    _spriteBatch.DrawLine(coordsService.CellToWorld(start),
                         end.ToVector2() * EngineSettings.CellSize +
                         new Vector2(EngineSettings.CellSize / 2, EngineSettings.CellSize / 2),
                         Color.Black, thickness: 5);

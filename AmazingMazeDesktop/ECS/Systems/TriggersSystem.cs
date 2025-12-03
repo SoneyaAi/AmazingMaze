@@ -22,32 +22,34 @@ public class TriggersSystem(GameContext context) : EntityUpdateSystem(Aspect.All
     {
         foreach (var entity in ActiveEntities)
         {
-            
             var trigger = _triggerMapper.Get(entity);
             if (trigger.IsArmed && trigger.Type == TriggerType.OnEnter)
             {
                 trigger.IsArmed = false;
                 trigger.IsTriggered = true;
             }
+
             if (!trigger.IsTriggered)
                 continue;
             Debug.WriteLine(trigger.Action);
             if (trigger.Action == TriggerAction.LoadNextLevel)
             {
                 GetEntity(trigger.ActivatingEntity).Get<Transform2>().Position =
-                    Conversions.CellToWorld(
+                    context.Services.CoordinatesTranslator.CellToWorld(
                         context.CurrentLevel.SpawnPoints.First(x => x.IsPlayerSpawnFromHigher).TileCoordinates);
                 context.ChangeLevelBy(1);
             }
+
             if (trigger.Action == TriggerAction.LoadPreviousLevel)
             {
-                if(context._currentLevelIndex == 0)
+                if (context._currentLevelIndex == 0)
                     continue;
                 GetEntity(trigger.ActivatingEntity).Get<Transform2>().Position =
-                    Conversions.CellToWorld(
+                    context.Services.CoordinatesTranslator.CellToWorld(
                         context.CurrentLevel.SpawnPoints.First(x => x.IsPlayerSpawnFromLower).TileCoordinates);
                 context.ChangeLevelBy(-1);
             }
+
             trigger.IsTriggered = false;
         }
     }

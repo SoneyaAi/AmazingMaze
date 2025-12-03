@@ -1,4 +1,6 @@
+using System.Linq;
 using AmazingMazeDesktop.Interfaces;
+using AmazingMazeDesktop.WorldModel;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
 
@@ -15,6 +17,12 @@ public class PlayerTracker(GameContext context) : IPlayerTracker
 
     public Point GetPlayerPositionCell()
     {
-        return Conversions.WorldToCell(GetPlayerPositionWorld());
+        return context.Services.CoordinatesTranslator.WorldToCell(GetPlayerPositionWorld());
+    }
+    public Room GetPlayerPositionRoom()
+    {
+        var cell = GetPlayerPositionCell();
+        var room = context.CurrentLevel.Rooms.FirstOrDefault(x => x.Tiles.Select(y => y.Position).Contains(cell));
+        return room;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using AmazingMazeDesktop.ECS;
+using AmazingMazeDesktop.Services;
 using AmazingMazeDesktop.WorldGeneration;
 using AmazingMazeDesktop.WorldGeneration.Configs;
 using AmazingMazeDesktop.WorldModel;
@@ -26,7 +27,12 @@ public class GameContext
 
     public GameContext(ConfigsPackage configs, OrthographicCamera camera, GraphicsDevice graphicsDevice)
     {
-        Services = new GameServices(this);
+        Services = new GameServices()
+        {
+            PathfinderService = new AstarPathfinderService(this),
+            CoordinatesTranslator = new CoordinatesTranslatorService(this),
+            PlayerTracker = new PlayerTracker(this)
+        };
         _configs = configs;
         _dungeon = new DungeonGenerator().Generate(_configs);
         CurrentLevel = _dungeon.Levels[_currentLevelIndex];

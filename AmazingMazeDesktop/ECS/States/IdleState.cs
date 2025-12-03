@@ -20,13 +20,13 @@ public class IdleState : IEnemyState
         var stateMachine = entity.Get<StateComponent>();
         var transform = entity.Get<Transform2>();
 
-        var dist = Vector2.Distance(transform.Position, enemyStateContext.PlayerPosition);//    enemy.DistanceToPlayer();
+        var dist = Vector2.Distance(transform.Position, enemyStateContext.PlayerPosition);
 
         // jeśli za daleko – zgubił gracza, przechodzimy do Search lub Patrol
         if (entity.Has<PathComponent>() && entity.Get<PathComponent>().Path.Count < stateMachine.AgroRange)
         {
             stateMachine.NextStateId = EnemyStateId.Chase;// enemy.ChangeState(EnemyStateId.Search);
-            return;
+            
         }
     }
 

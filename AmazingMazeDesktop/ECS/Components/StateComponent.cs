@@ -6,11 +6,7 @@ namespace AmazingMazeDesktop.Components;
 
 public class StateComponent
 {
-    public Dictionary<EnemyStateId, IEnemyState> States = new Dictionary<EnemyStateId, IEnemyState>()
-    {
-        { EnemyStateId.Chase, new ChaseState() },
-        { EnemyStateId.Idle, new IdleState() }
-    };
+
 
 
     public MoveState Current;

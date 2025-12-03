@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using AmazingMazeDesktop.Components;
+using AmazingMazeDesktop.Interfaces;
 using Labyrinthian;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended;
@@ -11,7 +12,7 @@ using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.Systems;
 
-public class MovementSystem() : EntityProcessingSystem(Aspect.All(typeof(MovementComponent)))
+public class MovementSystem(ICoordsTranslationService  coordsService) : EntityProcessingSystem(Aspect.All(typeof(MovementComponent)))
 {
     public MazeStructure MazeStructure;
     private ComponentMapper<Transform2> _transformMapper;
@@ -37,7 +38,7 @@ public class MovementSystem() : EntityProcessingSystem(Aspect.All(typeof(Movemen
         {
  
             var pathComponent = _pathMapper.Get(entityId);
-            if (Conversions.WorldToCell(movement.Target) == Conversions.WorldToCell(position)) // Same cell as target
+            if (coordsService.WorldToCell(movement.Target) == coordsService.WorldToCell(position)) // Same cell as target
             {
                 movement.Direction = Vector2.Normalize(Vector2.Subtract(movement.Target, position));
                 transform.Position += movement.Direction * movement.Speed *
@@ -50,7 +51,7 @@ public class MovementSystem() : EntityProcessingSystem(Aspect.All(typeof(Movemen
                 return;
             }
 
-            if (Conversions.WorldToCell(movement.Target) !=
+            if (coordsService.WorldToCell(movement.Target) !=
                 pathComponent.Path.LastOrDefault()) // Target cell change
             {
                 pathComponent.RecalculateRequested = true;
@@ -63,7 +64,7 @@ public class MovementSystem() : EntityProcessingSystem(Aspect.All(typeof(Movemen
                     return;
             }
             
-            if (Vector2.Distance(Conversions.CellToWorld(pathComponent.Path.Peek()), position) <
+            if (Vector2.Distance(coordsService.CellToWorld(pathComponent.Path.Peek()), position) <
                 WaypointRadius) // Waypoint reached
             {
                 pathComponent.Path.Dequeue();
@@ -71,7 +72,7 @@ public class MovementSystem() : EntityProcessingSystem(Aspect.All(typeof(Movemen
 
             if (pathComponent.Path.TryPeek(out var nextWaypoint))
             {
-                var target = Conversions.CellToWorld(nextWaypoint);
+                var target = coordsService.CellToWorld(nextWaypoint);
                 movement.Direction = Vector2.Normalize(Vector2.Subtract(target, position));
                 transform.Position += movement.Direction * movement.Speed *
                                       (float)gameTime.ElapsedGameTime.TotalSeconds;

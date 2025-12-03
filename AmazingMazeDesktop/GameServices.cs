@@ -1,9 +1,11 @@
+using AmazingMazeDesktop.Interfaces;
 using AmazingMazeDesktop.Services;
 
 namespace AmazingMazeDesktop;
 
-public class GameServices(GameContext context)
+public class GameServices()
 {
-    public AstarPathfinderService PathfinderService { get; private set; } = new AstarPathfinderService(context);
-    public PlayerTracker PlayerTracker { get; private set; } = new PlayerTracker(context);
+    public IPathfinderService PathfinderService { get; set; } 
+    public IPlayerTracker PlayerTracker { get; set; } 
+    public ICoordsTranslationService CoordinatesTranslator { get; set; } 
 }

@@ -9,7 +9,7 @@ using Vector2 = Microsoft.Xna.Framework.Vector2;
 
 namespace AmazingMazeDesktop.ECS.States;
 
-public class ChaseState : IEnemyState
+public class ChaseState() : IEnemyState
 {                                                     
     public void Enter(Entity entity)
     {
@@ -26,8 +26,7 @@ public class ChaseState : IEnemyState
         // jeśli za daleko – zgubił gracza, przechodzimy do Search lub Patrol
         if (entity.Has<PathComponent>() && entity.Get<PathComponent>().Path.Count > stateMachine.AgroRange)
         {
-            stateMachine.NextStateId = EnemyStateId.Idle;// enemy.ChangeState(EnemyStateId.Search);
-            return;
+            stateMachine.NextStateId = EnemyStateId.Idle;
         }
 
         

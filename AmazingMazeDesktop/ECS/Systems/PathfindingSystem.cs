@@ -8,7 +8,7 @@ using MonoGame.Extended.ECS.Systems;
 
 namespace AmazingMazeDesktop.ECS.Systems;
 
-public class PathfindingSystem(IPathfinderService pathingService)
+public class PathfindingSystem(IPathfinderService pathingService, ICoordsTranslationService coordinatesTranslatorService)
     : EntityProcessingSystem(Aspect.All(typeof(PathComponent)))
 {
     private ComponentMapper<PathComponent> _pathMapper;
@@ -30,8 +30,8 @@ public class PathfindingSystem(IPathfinderService pathingService)
 
         var transform = _transformMapper.Get(entityId);
         var movement = _movementMapper.Get(entityId);
-        var targetCell = Conversions.WorldToCell(movement.Target);
-        var startCell = Conversions.WorldToCell(transform.Position);
+        var targetCell = coordinatesTranslatorService.WorldToCell(movement.Target);
+        var startCell = coordinatesTranslatorService.WorldToCell(transform.Position);
         var path = new Queue<Point>();
 
         var corridorsPath = pathingService.GetPath(startCell, targetCell);

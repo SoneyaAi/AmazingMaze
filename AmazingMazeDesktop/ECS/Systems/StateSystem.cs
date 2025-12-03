@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using AmazingMazeDesktop.Components;
 using AmazingMazeDesktop.ECS.StateContext;
+using AmazingMazeDesktop.ECS.States;
+using AmazingMazeDesktop.Interfaces;
 using Microsoft.Xna.Framework;
 using MonoGame.Extended.ECS;
 using MonoGame.Extended.ECS.Systems;
@@ -9,6 +12,12 @@ namespace AmazingMazeDesktop.Systems;
 
 public class StateSystem(GameServices services) : EntityUpdateSystem(Aspect.All(typeof(StateComponent)))
 {
+    public readonly Dictionary<EnemyStateId, IEnemyState> States = new()
+    {
+        { EnemyStateId.Chase, new ChaseState() },
+        { EnemyStateId.Idle, new IdleState() }
+    };
+    
     private ComponentMapper<StateComponent> _stateComponentMapper;
     private ComponentMapper<MovementComponent> _movementComponentMapper;
     private ComponentMapper<PlayerControlComponent> _playerControlComponentMapper;
@@ -28,8 +37,7 @@ public class StateSystem(GameServices services) : EntityUpdateSystem(Aspect.All(
 
             if (stateComponent.CurrentStateId == stateComponent.NextStateId)
             {
-                if(stateComponent.CurrentState == null)
-                    stateComponent.CurrentState = stateComponent.States[stateComponent.CurrentStateId];
+                stateComponent.CurrentState ??= States[stateComponent.CurrentStateId];
                 stateComponent.CurrentState.Update(GetEntity(entity), gameTime, new EnemyStateContext()
                 {
                     PlayerPosition = services.PlayerTracker.GetPlayerPositionWorld()
@@ -40,10 +48,10 @@ public class StateSystem(GameServices services) : EntityUpdateSystem(Aspect.All(
             {
                 stateComponent.CurrentState.Exit(GetEntity(entity));
                 stateComponent.CurrentStateId = stateComponent.NextStateId;
-                stateComponent.CurrentState = stateComponent.States[stateComponent.CurrentStateId];
+                stateComponent.CurrentState = States[stateComponent.CurrentStateId];
                 stateComponent.CurrentState.Enter(GetEntity(entity));
             }
-            
+            // movement
             if (GetEntity(entity).Has<MovementComponent>())
             {
                 var movementComponent = _movementComponentMapper.Get(entity);

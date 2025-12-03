@@ -24,14 +24,14 @@ public class ECSWorld
         _collisionSystem = new CollisionSystem(context);
         _entityFactory = new EntityFactory(context, _collisionSystem);
         _spawnSystem = new SpawnSystem(context, _entityFactory);
-        _movementSystem = new MovementSystem();
+        _movementSystem = new MovementSystem(context.Services.CoordinatesTranslator);
         _movementSystem.MazeStructure = context.CurrentLevel.MazeStructure;
 
         World = new WorldBuilder()
             .AddSystem(new PlayerControlSystem())
             .AddSystem(_spawnSystem)
             .AddSystem(new TriggersSystem(context))
-            .AddSystem(new PathfindingSystem(context.Services.PathfinderService))
+            .AddSystem(new PathfindingSystem(context.Services.PathfinderService, context.Services.CoordinatesTranslator))
             .AddSystem(_movementSystem)
             .AddSystem(new ShootingSystem(_entityFactory))
             .AddSystem(new EnemyAiSystem(context))
@@ -39,7 +39,7 @@ public class ECSWorld
             .AddSystem(new StateSystem(context.Services))
             .AddSystem(new CameraSystem(camera, context.Services.PlayerTracker))
             .AddSystem(new RenderSystem(graphicsDevice, camera))
-            .AddSystem(new DebugRenderSystem(graphicsDevice, camera))
+            .AddSystem(new DebugRenderSystem(graphicsDevice, camera, context.Services.CoordinatesTranslator))
             .Build();
         _entityFactory.SetWorld(World);
 
@@ -50,12 +50,12 @@ public class ECSWorld
             {
                 _entityFactory.BuildPlayer(new PlayerBuilderArgs()
                 {
-                    Position = Conversions.CellToWorld(spawner.TileCoordinates)
+                    Position = context.Services.CoordinatesTranslator.CellToWorld(spawner.TileCoordinates)
                 });
                 continue;
             }
 
-            var spawnerPos = Conversions.CellToWorld(spawner.TileCoordinates);
+            var spawnerPos = context.Services.CoordinatesTranslator.CellToWorld(spawner.TileCoordinates);
             _entityFactory.BuildSpawner(new SpawnerBuilderArgs()
             {
                 Position = spawnerPos,
@@ -68,7 +68,7 @@ public class ECSWorld
         {
             _entityFactory.BuildTrigger(new TriggerBuilderArgs()
             {
-                Position = Conversions.CellToWorld(trigger.TileCoordinates),
+                Position = context.Services.CoordinatesTranslator.CellToWorld(trigger.TileCoordinates),
                 Action = trigger.Action,
                 Type = trigger.Type,
             });

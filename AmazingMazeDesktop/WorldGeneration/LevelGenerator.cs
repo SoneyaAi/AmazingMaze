@@ -34,6 +34,7 @@ public class LevelGenerator()
 
                 level.TileMap.Tiles[y, x] = new Tile
                 {
+                    Position = new Point(x, y),
                     Type = cell == 1 ? TileType.Wall : TileType.Floor,
                     IsPassable = cell != 1
                 };

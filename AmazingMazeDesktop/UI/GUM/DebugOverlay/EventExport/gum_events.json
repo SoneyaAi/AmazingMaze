@@ -1,0 +1,146 @@
+{
+  "UserEvents": {
+    "f7f376a1fcd0d0e11a10ed1b6577c99784d3a6bbe669b1d13fae43eb64634f6e": [
+      {
+        "NewName": "DebugMenu",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 0,
+        "TimestampUtc": "2025-11-19T17:07:51.7481371Z"
+      },
+      {
+        "NewName": "DebugMenu.ContainerInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:08:13.3509259Z"
+      },
+      {
+        "NewName": "DebugMenu.ColoredRectangleInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:11:42.7115285Z"
+      },
+      {
+        "NewName": "DebugMenu.TextInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:13:29.1686887Z"
+      },
+      {
+        "NewName": "DebugMenu.ContainerInstance1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:16:03.2395636Z"
+      },
+      {
+        "NewName": "DebugMenu.ContainerInstance2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:17:05.8885683Z"
+      },
+      {
+        "NewName": "DebugMenu.RadioButtonInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:41:26.9300784Z"
+      },
+      {
+        "NewName": "DebugMenu.RadioButtonInstance1",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:42:04.6166853Z"
+      },
+      {
+        "NewName": "DebugMenu.RadioButtonInstance2",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-19T17:45:34.7162722Z"
+      },
+      {
+        "NewName": null,
+        "OldName": "DebugMenu.Container ContainerInstance in DebugMenu",
+        "ElementType": "Screens",
+        "EventType": 6,
+        "TimestampUtc": "2025-11-19T19:31:22.5574643Z"
+      },
+      {
+        "NewName": "DebugMenu.BackgroundRectangle",
+        "OldName": "DebugMenu.ColoredRectangleInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T19:31:34.9082063Z"
+      },
+      {
+        "NewName": "DebugMenu.Container",
+        "OldName": "DebugMenu.ContainerInstance1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T19:33:12.3386591Z"
+      },
+      {
+        "NewName": "DebugMenu.SettingsContainer",
+        "OldName": "DebugMenu.ContainerInstance2",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T19:36:51.311761Z"
+      },
+      {
+        "NewName": "DebugMenu.PathsCheckbox",
+        "OldName": "DebugMenu.RadioButtonInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T19:53:26.4912897Z"
+      },
+      {
+        "NewName": "DebugMenu.CollidersCheckbox",
+        "OldName": "DebugMenu.RadioButtonInstance1",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T19:53:36.6954274Z"
+      },
+      {
+        "NewName": "DebugMenu.WaypointCheckbox",
+        "OldName": "DebugMenu.RadioButtonInstance2",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T19:53:45.5752012Z"
+      },
+      {
+        "NewName": "DebugMenu.WaypointsCheckbox",
+        "OldName": "DebugMenu.WaypointCheckbox",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T19:53:53.6043832Z"
+      },
+      {
+        "NewName": "DebugMenu.CollidersCheckbox",
+        "OldName": "DebugMenu.CollidersCheckbox",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-19T20:01:13.3815702Z"
+      },
+      {
+        "NewName": "DebugMenu.CheckBoxInstance",
+        "OldName": null,
+        "ElementType": "Screens",
+        "EventType": 5,
+        "TimestampUtc": "2025-11-20T10:26:26.946959Z"
+      },
+      {
+        "NewName": "DebugMenu.EnableDebugCheckbox",
+        "OldName": "DebugMenu.CheckBoxInstance",
+        "ElementType": "Screens",
+        "EventType": 7,
+        "TimestampUtc": "2025-11-20T10:26:55.837066Z"
+      }
+    ]
+  }
+}

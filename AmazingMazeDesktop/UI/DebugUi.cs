@@ -18,7 +18,7 @@ public class DebugUi(Game game)
     public void Initialize()
     {
         // Load project 
-        _ui.Initialize(game, "../UI/GUM/Debug/debug.gumx");
+        _ui.Initialize(game, "../UI/GUM/DebugOverlay/debug.gumx");
 
         if (ObjectFinder.Self.GumProjectSave == null)
             throw new Exception("Gum project not found");
